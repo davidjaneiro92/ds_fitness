@@ -1,0 +1,33 @@
+name: ds_fitness
+description: "DS Fitness — Sua jornada, seus resultados."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Estado, injecao de dependencia e navegacao (stack oficial — specs/07-template-blueprint)
+  get: ^4.6.6
+
+  # Persistencia local / cache
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # Logging estruturado
+  logger: ^2.5.0
+
+  # Formatacao pt-BR (datas, numeros)
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

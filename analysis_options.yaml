@@ -1,0 +1,38 @@
+# DS Fitness — Lint Configuration
+# Base: flutter_lints 4.x + regras recomendadas em
+# specs/04-quality/conventions-and-lint.md §4.2
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "build/**"
+  errors:
+    missing_required_param: error
+    missing_return: error
+    dead_code: warning
+
+linter:
+  rules:
+    # Estilo
+    prefer_single_quotes: true
+    always_declare_return_types: true
+    avoid_print: true
+    sort_constructors_first: true
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+
+    # Qualidade
+    unawaited_futures: true
+    always_put_required_named_parameters_first: true
+
+    # Organizacao de imports
+    directives_ordering: true
+
+    # Seguranca
+    avoid_returning_null_for_void: true
+
+    # Desabilitados deliberadamente (GetX e arquitetura do template)
+    prefer_final_parameters: false
+    one_member_abstracts: false

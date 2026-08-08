@@ -1,0 +1,25 @@
+/// Centraliza as strings de rota do app (specs/02-infrastructure/navigation.md).
+///
+/// Nenhum callsite deve usar string literal de rota.
+enum PagesRoutes {
+  splash('/splash'),
+  login('/login'),
+  cadastro('/cadastro'),
+  home('/home'),
+  treinos('/treinos'),
+  treinoNovo('/treinos/novo'),
+  treinoEditar('/treinos/editar'),
+  grupos('/grupos'),
+  exercicios('/exercicios'),
+  execucao('/execucao'),
+  execucaoConcluido('/execucao/concluido'),
+  historico('/historico'),
+  estatisticas('/estatisticas'),
+  biblioteca('/biblioteca'),
+  exercicioDetalhe('/exercicio'),
+  perfil('/perfil');
+
+  const PagesRoutes(this.path);
+
+  final String path;
+}

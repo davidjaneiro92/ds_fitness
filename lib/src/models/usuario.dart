@@ -1,3 +1,4 @@
+import '../core/utils/json_utils.dart';
 import '../enum/objetivo_treino.dart';
 
 /// Usuario logado (planejamento §5).
@@ -17,17 +18,17 @@ class Usuario {
 
   factory Usuario.fromJson(Map<String, dynamic> json) {
     return Usuario(
-      id: json['id'] as String,
+      id: JsonUtils.idParaTexto(json['id']),
       nome: json['nome'] as String,
       email: json['email'] as String,
-      dataNascimento:
-          DateTime.tryParse(json['dataNascimento'] as String? ?? ''),
+      dataNascimento: JsonUtils.data(json['dataNascimento']),
       sexo: json['sexo'] as String? ?? 'Masculino',
-      peso: (json['peso'] as num?)?.toDouble() ?? 0,
-      altura: (json['altura'] as num?)?.toDouble() ?? 0,
+      peso: JsonUtils.decimal(json['peso']),
+      altura: JsonUtils.decimal(json['altura']),
       objetivo: ObjetivoTreino.fromSlug(json['objetivo'] as String?),
       fotoUrl: json['fotoUrl'] as String? ?? '',
-      metaTreinosSemana: json['metaTreinosSemana'] as int? ?? 6,
+      metaTreinosSemana:
+          JsonUtils.inteiro(json['metaTreinosSemana'], padrao: 6),
     );
   }
 
@@ -97,7 +98,9 @@ class Usuario {
         'id': id,
         'nome': nome,
         'email': email,
-        'dataNascimento': dataNascimento?.toIso8601String(),
+        'dataNascimento': dataNascimento == null
+            ? null
+            : JsonUtils.dataParaApi(dataNascimento!),
         'sexo': sexo,
         'peso': peso,
         'altura': altura,

@@ -44,17 +44,7 @@ class ExercicioDetalheView
     }
 
     return AppScaffold(
-      navbar: AppNavbar(
-        title: args.exercicio.nome,
-        action: Obx(() {
-          final bool favorito = controller.exercicio.value.favorito;
-          return NavbarAction(
-            icon: favorito ? Icons.star_rounded : Icons.star_outline_rounded,
-            onTap: () => controller.alternarFavorito(),
-            color: favorito ? ColorTokens.warning : null,
-          );
-        }),
-      ),
+      navbar: _NavbarDoExercicio(controller: controller),
       body: DefaultTabController(
         length: 3,
         child: Column(
@@ -88,6 +78,46 @@ class ExercicioDetalheView
         ),
       ),
     );
+  }
+}
+
+/// Navbar reativa: o titulo acompanha o nome do exercicio (que muda quando
+/// ele e editado) e a edicao so aparece para exercicio do proprio usuario.
+/// Fica fora do `Obx` da tela inteira para a aba escolhida nao ser perdida a
+/// cada favorito.
+class _NavbarDoExercicio extends StatelessWidget implements PreferredSizeWidget {
+  const _NavbarDoExercicio({required this.controller});
+
+  final ExercicioDetalheControllerInterface controller;
+
+  @override
+  Size get preferredSize => const Size.fromHeight(SpacingTokens.navBarHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final Exercicio atual = controller.exercicio.value;
+      return AppNavbar(
+        title: atual.nome,
+        action: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (atual.personalizado)
+              NavbarAction(
+                icon: Icons.edit_rounded,
+                onTap: () => controller.editar(),
+              ),
+            NavbarAction(
+              icon: atual.favorito
+                  ? Icons.star_rounded
+                  : Icons.star_outline_rounded,
+              onTap: () => controller.alternarFavorito(),
+              color: atual.favorito ? ColorTokens.warning : null,
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 

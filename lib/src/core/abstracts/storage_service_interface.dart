@@ -12,6 +12,10 @@ abstract class StorageServiceInterface {
 /// Chaves de armazenamento usadas pelo app.
 abstract class StorageKeys {
   static const String token = 'auth_token';
+  static const String refreshToken = 'auth_refresh_token';
+
+  /// Instante (ISO 8601, UTC) em que o access token vence.
+  static const String tokenExpiraEm = 'auth_token_expira_em';
   static const String usuario = 'usuario';
   static const String sessaoEmAndamento = 'sessao_em_andamento';
   static const String somDescanso = 'pref_som_descanso';

@@ -16,4 +16,9 @@ abstract class ExercicioDetalheControllerInterface {
   Future<void> carregar();
 
   Future<void> alternarFavorito();
+
+  /// Abre o formulario de edicao (so para exercicio criado pelo usuario) e
+  /// atualiza a tela quando ele volta. Se o exercicio foi excluido, fecha
+  /// esta tela tambem.
+  Future<void> editar();
 }

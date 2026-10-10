@@ -1,34 +1,53 @@
 import 'package:get/get.dart';
 
-import '../../../../core/abstracts/mock_database_interface.dart';
+import '../../../../constants/endpoints.dart';
+import '../../../../enum/http_method.dart';
 import '../../../../models/treino.dart';
+import '../../../abstracts/http_manager_interface.dart';
 import '../abstracts/treinos_repository_interface.dart';
 
-/// Implementacao mock do repository de Meus Treinos (latencia simulada).
+/// Repository de Meus Treinos sobre a API (`/treinos`).
 class TreinosRepository implements TreinosRepositoryInterface {
-  final MockDatabaseInterface _db = Get.find();
+  final HttpManagerInterface _http = Get.find();
 
   @override
   Future<List<Treino>> listar() async {
-    await Future<void>.delayed(const Duration(milliseconds: 220));
-    return _db.treinos;
+    final dynamic corpo = await _http.restRequest(
+      path: Endpoints.treinos,
+      method: HttpMethod.get,
+    );
+    return (corpo as List<dynamic>)
+        .map((dynamic e) => Treino.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   @override
   Future<Treino> duplicar(String id) async {
-    await Future<void>.delayed(const Duration(milliseconds: 220));
-    return _db.duplicarTreino(id);
+    final dynamic corpo = await _http.restRequest(
+      path: Endpoints.duplicarTreino(id),
+      method: HttpMethod.post,
+    );
+    return Treino.fromJson(corpo as Map<String, dynamic>);
   }
 
   @override
   Future<void> excluir(String id) async {
-    await Future<void>.delayed(const Duration(milliseconds: 220));
-    _db.excluirTreino(id);
+    await _http.restRequest(
+      path: Endpoints.treino(id),
+      method: HttpMethod.delete,
+    );
   }
 
   @override
   Future<Treino?> obterTreinoDoDia() async {
-    await Future<void>.delayed(const Duration(milliseconds: 220));
-    return _db.treinoDoDia;
+    final dynamic corpo = await _http.restRequest(
+      path: Endpoints.treinoDoDia,
+      method: HttpMethod.get,
+      query: <String, dynamic>{'diaSemana': DateTime.now().weekday},
+    );
+    if (corpo == null) {
+      return null;
+    }
+    return Treino.fromJson(corpo as Map<String, dynamic>);
   }
 }

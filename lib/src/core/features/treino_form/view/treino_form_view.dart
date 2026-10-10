@@ -89,12 +89,13 @@ class _TreinoFormViewState extends State<TreinoFormView> {
   Future<void> _salvar() async {
     final bool sucesso = await controller.salvar();
     if (!sucesso) {
-      AppSnackbar.erro('Não foi possível salvar o treino.');
       return;
     }
-    AppSnackbar.success('Treino salvo!');
     controller.encerrar();
     Get.back<void>();
+    // Depois de fechar a tela: com um snackbar aberto, o Get.back() so o
+    // fecha e nao navega.
+    AppSnackbar.success('Treino salvo!');
   }
 
   @override

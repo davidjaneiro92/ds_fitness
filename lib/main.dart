@@ -4,16 +4,16 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'src/core/abstracts/format_service_interface.dart';
+import 'src/core/abstracts/http_manager_interface.dart';
 import 'src/core/abstracts/log_service_interface.dart';
-import 'src/core/abstracts/mock_database_interface.dart';
 import 'src/core/abstracts/storage_service_interface.dart';
 import 'src/core/features/auth/abstracts/auth_controller_interface.dart';
 import 'src/core/features/auth/abstracts/auth_repository_interface.dart';
 import 'src/core/features/auth/controller/auth_controller.dart';
 import 'src/core/features/auth/repository/auth_repository.dart';
 import 'src/core/services/format_service.dart';
+import 'src/core/services/http_manager.dart';
 import 'src/core/services/log_service.dart';
-import 'src/core/services/mock_database.dart';
 import 'src/core/services/storage_service.dart';
 import 'src/core/theme/app_theme.dart';
 import 'src/enum/pages_routes.dart';
@@ -31,7 +31,10 @@ Future<void> main() async {
   Get.put<LogServiceInterface>(LogService(), permanent: true);
   Get.put<StorageServiceInterface>(StorageService(box), permanent: true);
   Get.put<FormatServiceInterface>(FormatService(), permanent: true);
-  Get.put<MockDatabaseInterface>(MockDatabase(), permanent: true);
+  Get.put<HttpManagerInterface>(
+    HttpManager(storage: Get.find(), log: Get.find()),
+    permanent: true,
+  );
 
   // Autenticacao e permanente (specs/06 — tabela de controllers).
   Get.put<AuthRepositoryInterface>(AuthRepository(), permanent: true);

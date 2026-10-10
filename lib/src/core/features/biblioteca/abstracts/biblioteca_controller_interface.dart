@@ -19,7 +19,9 @@ abstract class BibliotecaControllerInterface {
   /// Lista ja aplicando busca, filtro rapido e grupo muscular selecionado.
   List<Exercicio> get filtrados;
 
-  Future<void> carregar();
+  /// Recarrega o catalogo. Com [silencioso], mantem a lista na tela enquanto
+  /// busca (usado ao voltar de outra tela, para nao piscar o carregamento).
+  Future<void> carregar({bool silencioso = false});
 
   void buscar(String termo);
 
@@ -29,5 +31,10 @@ abstract class BibliotecaControllerInterface {
 
   Future<void> alternarFavorito(String id);
 
-  void abrirDetalhe(Exercicio exercicio);
+  /// Abre o detalhe e, ao voltar, atualiza a lista (favorito, recentes,
+  /// edicao ou exclusao feitos la dentro).
+  Future<void> abrirDetalhe(Exercicio exercicio);
+
+  /// Abre o formulario de exercicio novo e atualiza a lista se algo foi salvo.
+  Future<void> novoExercicio();
 }

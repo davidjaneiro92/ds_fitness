@@ -36,6 +36,12 @@ void main() {
       expect(Validators.senha('123'), isNotNull);
     });
 
+    test('senha de conta nova exige 8 caracteres, como o servidor', () {
+      expect(Validators.senhaNova('12345678'), isNull);
+      expect(Validators.senhaNova('1234567'), isNotNull);
+      expect(Validators.senhaNova(''), isNotNull);
+    });
+
     test('data de nascimento exige idade minima de 16 anos', () {
       final DateTime hoje = DateTime.now();
       final String maiorDeIdade = '01/01/${hoje.year - 20}';

@@ -45,7 +45,7 @@ class _CadastroViewState extends State<CadastroView> {
     final bool valido =
         Validators.nomeCompleto(_nomeController.text) == null &&
             Validators.email(_emailController.text) == null &&
-            Validators.senha(_senhaController.text) == null &&
+            Validators.senhaNova(_senhaController.text) == null &&
             Validators.dataNascimento(_dataController.text) == null &&
             _sexo.value != null;
     _formValido.value = valido;
@@ -131,12 +131,12 @@ class _CadastroViewState extends State<CadastroView> {
                 label: 'Senha',
                 controller: _senhaController,
                 isPassword: true,
-                validator: Validators.senha,
+                validator: Validators.senhaNova,
                 onChanged: (_) => _validar(),
               ),
               const Gap(SpacingTokens.xs),
               const Text(
-                'Mínimo de 6 caracteres',
+                'Mínimo de 8 caracteres',
                 style: TypographyTokens.caption,
               ),
               const Gap(SpacingTokens.md),

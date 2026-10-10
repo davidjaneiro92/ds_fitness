@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 
-import '../../../../../core/abstracts/mock_database_interface.dart';
 import '../../../../../enum/execucao_state.dart';
 import '../../../../../models/serie_executada.dart';
 import '../../../../../models/treino_exercicio.dart';
@@ -35,14 +34,12 @@ class ConcluirSerieCommand implements CommandInterface {
   final RxInt descansoTotal;
   final RxInt segundosDescanso;
 
-  final MockDatabaseInterface _db = Get.find();
-
   bool get _ultimaSerie => numeroSerie >= totalSeries;
 
   @override
   Future<void> execute() async {
     final SerieExecutada serie = SerieExecutada(
-      id: _db.novoId('se'),
+      id: '${treinoExercicio.id}_$numeroSerie',
       exercicioId: treinoExercicio.exercicioId,
       numeroSerie: numeroSerie,
       repeticoes: treinoExercicio.repeticoes,

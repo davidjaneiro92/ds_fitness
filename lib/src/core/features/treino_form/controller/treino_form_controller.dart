@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 
+import '../../../../components/feedback/app_snackbar.dart';
 import '../../../../enum/objetivo_treino.dart';
 import '../../../../models/exercicio.dart';
 import '../../../../models/treino.dart';
 import '../../../../models/treino_exercicio.dart';
 import '../../../../routes/route_args.dart';
 import '../../../abstracts/log_service_interface.dart';
-import '../../../abstracts/mock_database_interface.dart';
+import '../../../utils/error_messages.dart';
 import '../abstracts/treino_form_controller_interface.dart';
 import '../abstracts/treino_form_repository_interface.dart';
 
@@ -21,7 +22,6 @@ import '../abstracts/treino_form_repository_interface.dart';
 class TreinoFormController extends GetxController
     implements TreinoFormControllerInterface {
   final TreinoFormRepositoryInterface _repository = Get.find();
-  final MockDatabaseInterface _db = Get.find();
   final LogServiceInterface _log = Get.find();
 
   @override
@@ -40,6 +40,10 @@ class TreinoFormController extends GetxController
   final RxList<TreinoExercicio> exercicios = <TreinoExercicio>[].obs;
 
   String? _treinoIdAtual;
+
+  /// Itens recem-adicionados ainda nao tem id do servidor: recebem um id local
+  /// (`novo_N`), que o repository reconhece como "criar" ao salvar.
+  int _proximoIdLocal = 1;
 
   @override
   void onInit() {
@@ -69,6 +73,9 @@ class TreinoFormController extends GetxController
       objetivo.value = treino.objetivo;
       descricao.value = treino.descricao;
       exercicios.assignAll(treino.exercicios);
+    } catch (erro, stackTrace) {
+      _log.error('Falha ao carregar treino', error: erro, stackTrace: stackTrace);
+      AppSnackbar.erro(ErrorMessages.de(erro));
     } finally {
       carregando.value = false;
     }
@@ -91,7 +98,7 @@ class TreinoFormController extends GetxController
     String observacao = '',
   }) {
     final TreinoExercicio item = TreinoExercicio(
-      id: _db.novoId('te'),
+      id: 'novo_${_proximoIdLocal++}',
       exercicio: exercicio,
       ordem: exercicios.length,
       series: series,
@@ -156,7 +163,7 @@ class TreinoFormController extends GetxController
     if (!podeSalvar) {
       return false;
     }
-    final String id = _treinoIdAtual ?? _db.novoId('t');
+    final String id = _treinoIdAtual ?? '';
     final Treino treino = Treino(
       id: id,
       nome: nome.value.trim(),
@@ -167,9 +174,13 @@ class TreinoFormController extends GetxController
     try {
       final Treino salvo = await _repository.salvar(treino);
       _treinoIdAtual = salvo.id;
+      // Troca os ids locais pelos do servidor: salvar de novo atualiza os
+      // itens existentes em vez de criar copias.
+      exercicios.assignAll(salvo.exercicios);
       return true;
     } catch (erro, stackTrace) {
       _log.error('Falha ao salvar treino', error: erro, stackTrace: stackTrace);
+      AppSnackbar.erro(ErrorMessages.de(erro));
       return false;
     }
   }

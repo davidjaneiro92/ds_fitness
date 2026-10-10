@@ -21,8 +21,8 @@ class EstatisticasResumo {
   final List<DistribuicaoGrupo> distribuicao;
 }
 
-/// Contrato do repository de estatisticas — fala apenas com
-/// `MockDatabaseInterface` (tela 17).
+/// Contrato do repository de estatisticas — fala com a API
+/// (`/execucao/estatisticas`) (tela 17).
 abstract class EstatisticasRepositoryInterface {
   Future<EstatisticasResumo> calcular(PeriodoEstatistica periodo);
 }

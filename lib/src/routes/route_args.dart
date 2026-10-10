@@ -44,3 +44,13 @@ class ExercicioDetalheArgs {
 
   final Exercicio exercicio;
 }
+
+/// `/exercicio/novo` e `/exercicio/editar` — formulario de exercicio.
+class ExercicioFormArgs {
+  const ExercicioFormArgs({this.exercicio});
+
+  /// `null` = criando um exercicio novo.
+  final Exercicio? exercicio;
+
+  bool get isEdicao => exercicio != null;
+}

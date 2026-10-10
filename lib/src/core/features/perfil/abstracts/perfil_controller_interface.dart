@@ -14,7 +14,9 @@ abstract class PerfilControllerInterface {
 
   Future<void> carregar();
 
-  Future<void> salvarObjetivo(ObjetivoTreino objetivo);
+  /// Devolve `true` quando o objetivo foi gravado. A falha ja e avisada ao
+  /// usuario pelo controller.
+  Future<bool> salvarObjetivo(ObjetivoTreino objetivo);
 
   Future<void> sair();
 }

@@ -7,7 +7,6 @@ import '../../../../components/buttons/app_button.dart';
 import '../../../../components/common/gap.dart';
 import '../../../../components/empty_states/empty_state.dart';
 import '../../../../components/feedback/app_confirm_dialog.dart';
-import '../../../../components/feedback/app_snackbar.dart';
 import '../../../../components/inputs/app_text_field.dart';
 import '../../../../components/modals/app_modal_sheet.dart';
 import '../../../../components/navbars/app_navbar.dart';
@@ -31,7 +30,11 @@ class TreinoEditarView extends GetView<TreinoFormControllerInterface> {
   }
 
   Future<void> _sairSalvando() async {
-    await controller.salvar();
+    final bool sucesso = await controller.salvar();
+    if (!sucesso) {
+      // O controller ja avisou o motivo; sair agora perderia a edicao.
+      return;
+    }
     controller.encerrar();
     Get.back<void>();
   }
@@ -65,7 +68,6 @@ class TreinoEditarView extends GetView<TreinoFormControllerInterface> {
   Future<void> _iniciarTreino() async {
     final bool sucesso = await controller.salvar();
     if (!sucesso) {
-      AppSnackbar.erro('Não foi possível salvar o treino.');
       return;
     }
     final String? id = _treinoId;

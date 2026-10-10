@@ -1,3 +1,4 @@
+import '../core/utils/json_utils.dart';
 import 'exercicio.dart';
 
 /// Exercicio configurado dentro de um treino (series, reps, carga, descanso).
@@ -15,14 +16,14 @@ class TreinoExercicio {
 
   factory TreinoExercicio.fromJson(Map<String, dynamic> json) {
     return TreinoExercicio(
-      id: json['id'] as String,
+      id: JsonUtils.idParaTexto(json['id']),
       exercicio:
           Exercicio.fromJson(json['exercicio'] as Map<String, dynamic>),
-      ordem: json['ordem'] as int,
-      series: json['series'] as int? ?? 4,
-      repeticoes: json['repeticoes'] as int? ?? 12,
-      cargaInicial: (json['cargaInicial'] as num?)?.toDouble() ?? 0,
-      descansoSeg: json['descansoSeg'] as int? ?? 60,
+      ordem: JsonUtils.inteiro(json['ordem']),
+      series: JsonUtils.inteiro(json['series'], padrao: 4),
+      repeticoes: JsonUtils.inteiro(json['repeticoes'], padrao: 12),
+      cargaInicial: JsonUtils.decimal(json['cargaInicial']),
+      descansoSeg: JsonUtils.inteiro(json['descansoSeg'], padrao: 60),
       observacao: json['observacao'] as String? ?? '',
     );
   }

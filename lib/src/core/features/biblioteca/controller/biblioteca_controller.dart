@@ -1,11 +1,14 @@
 import 'package:get/get.dart';
 
+import '../../../../components/feedback/app_snackbar.dart';
+import '../../../../enum/exercicio_form_resultado.dart';
 import '../../../../enum/grupo_muscular.dart';
 import '../../../../enum/pages_routes.dart';
 import '../../../../enum/periodo_estatistica.dart';
 import '../../../../models/exercicio.dart';
 import '../../../../routes/route_args.dart';
 import '../../../abstracts/log_service_interface.dart';
+import '../../../utils/error_messages.dart';
 import '../abstracts/biblioteca_controller_interface.dart';
 import '../abstracts/biblioteca_repository_interface.dart';
 
@@ -40,21 +43,28 @@ class BibliotecaController extends GetxController
   }
 
   @override
-  Future<void> carregar() async {
-    carregando.value = true;
+  Future<void> carregar({bool silencioso = false}) async {
+    if (!silencioso) {
+      carregando.value = true;
+    }
     try {
-      final List<Exercicio> lista = await _repository.listarExercicios();
-      final List<Exercicio> recentes = await _repository.listarRecentes();
-      exercicios.value = lista;
+      final List<List<Exercicio>> respostas = await Future.wait(
+        <Future<List<Exercicio>>>[
+          _repository.listarExercicios(),
+          _repository.listarRecentes(),
+        ],
+      );
+      exercicios.value = respostas[0];
       _recentesIds
         ..clear()
-        ..addAll(recentes.map((Exercicio e) => e.id));
+        ..addAll(respostas[1].map((Exercicio e) => e.id));
     } catch (e, s) {
       _log.error(
         'Falha ao carregar biblioteca de exercicios',
         error: e,
         stackTrace: s,
       );
+      AppSnackbar.erro(ErrorMessages.de(e));
     } finally {
       carregando.value = false;
     }
@@ -119,15 +129,30 @@ class BibliotecaController extends GetxController
       }
     } catch (e, s) {
       _log.error('Falha ao alternar favorito', error: e, stackTrace: s);
+      AppSnackbar.erro(ErrorMessages.de(e));
     }
   }
 
   @override
-  void abrirDetalhe(Exercicio exercicio) {
-    _repository.registrarAcesso(exercicio.id);
-    Get.toNamed<void>(
+  Future<void> abrirDetalhe(Exercicio exercicio) async {
+    final Object? resultado = await Get.toNamed<Object?>(
       PagesRoutes.exercicioDetalhe.path,
       arguments: ExercicioDetalheArgs(exercicio: exercicio),
     );
+    if (resultado == ExercicioFormResultado.excluido) {
+      AppSnackbar.success('Exercício excluído');
+    }
+    await carregar(silencioso: true);
+  }
+
+  @override
+  Future<void> novoExercicio() async {
+    final Object? resultado = await Get.toNamed<Object?>(
+      PagesRoutes.exercicioNovo.path,
+      arguments: const ExercicioFormArgs(),
+    );
+    if (resultado == ExercicioFormResultado.salvo) {
+      await carregar(silencioso: true);
+    }
   }
 }

@@ -22,6 +22,7 @@ import '../../../../../core/theme/tokens/color_tokens.dart';
 import '../../../../../core/theme/tokens/spacing_tokens.dart';
 import '../../../../../core/theme/tokens/typography_tokens.dart';
 import '../../../../../models/exercicio.dart';
+import '../../../../../models/registro_carga.dart';
 import '../../../../../models/treino.dart';
 import '../../../../../models/treino_exercicio.dart';
 import '../../abstracts/execucao_controller_interface.dart';
@@ -50,9 +51,11 @@ class _MenuExecucao extends StatelessWidget {
     if (atual == null) {
       return;
     }
+    final List<RegistroCarga> registros =
+        await controller.registrosDoExercicioAtual();
     await showEvolucaoCargaModal(
       exercicioNome: atual.exercicio.nome,
-      registros: controller.registrosDoExercicioAtual(),
+      registros: registros,
     );
   }
 

@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 
 import '../../../../components/charts/app_line_chart.dart';
+import '../../../../components/feedback/app_snackbar.dart';
 import '../../../../core/abstracts/log_service_interface.dart';
 import '../../../../enum/periodo_estatistica.dart';
+import '../../../utils/error_messages.dart';
 import '../abstracts/estatisticas_controller_interface.dart';
 import '../abstracts/estatisticas_repository_interface.dart';
 
@@ -50,6 +52,7 @@ class EstatisticasController extends GetxController
       distribuicao.value = resumo.distribuicao;
     } catch (e, s) {
       _log.error('Erro ao carregar estatisticas', error: e, stackTrace: s);
+      AppSnackbar.erro(ErrorMessages.de(e));
     } finally {
       carregando.value = false;
     }

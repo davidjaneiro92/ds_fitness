@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 
+import '../../../../components/feedback/app_snackbar.dart';
 import '../../../../core/abstracts/log_service_interface.dart';
 import '../../../../enum/periodo_estatistica.dart';
 import '../../../../models/sessao.dart';
+import '../../../utils/error_messages.dart';
 import '../abstracts/historico_controller_interface.dart';
 import '../abstracts/historico_repository_interface.dart';
 
@@ -54,6 +56,7 @@ class HistoricoController extends GetxController
       }
     } catch (e, s) {
       _log.error('Erro ao carregar historico', error: e, stackTrace: s);
+      AppSnackbar.erro(ErrorMessages.de(e));
     } finally {
       carregando.value = false;
     }
@@ -78,6 +81,7 @@ class HistoricoController extends GetxController
       temMais.value = pagina.length == _porPagina;
     } catch (e, s) {
       _log.error('Erro ao carregar mais sessoes', error: e, stackTrace: s);
+      AppSnackbar.erro(ErrorMessages.de(e));
     } finally {
       carregandoMais.value = false;
     }
@@ -91,8 +95,4 @@ class HistoricoController extends GetxController
     filtro.value = novo;
     carregar();
   }
-
-  @override
-  String nomeExercicio(String id) =>
-      _repository.nomeExercicio(id) ?? 'Exercício';
 }

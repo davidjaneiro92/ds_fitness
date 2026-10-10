@@ -1,3 +1,4 @@
+import '../core/utils/json_utils.dart';
 import '../enum/grupo_muscular.dart';
 import '../enum/objetivo_treino.dart';
 import 'treino_exercicio.dart';
@@ -7,7 +8,7 @@ class Treino {
   const Treino({
     required this.id,
     required this.nome,
-    this.usuarioId = 'u1',
+    this.usuarioId = '',
     this.objetivo = ObjetivoTreino.hipertrofia,
     this.descricao = '',
     this.exercicios = const <TreinoExercicio>[],
@@ -17,20 +18,21 @@ class Treino {
 
   factory Treino.fromJson(Map<String, dynamic> json) {
     return Treino(
-      id: json['id'] as String,
+      id: JsonUtils.idParaTexto(json['id']),
       nome: json['nome'] as String,
-      usuarioId: json['usuarioId'] as String? ?? 'u1',
+      usuarioId: JsonUtils.idParaTexto(json['usuarioId']),
       objetivo: ObjetivoTreino.fromSlug(json['objetivo'] as String?),
       descricao: json['descricao'] as String? ?? '',
       exercicios: (json['exercicios'] as List<dynamic>? ?? <dynamic>[])
           .map((dynamic e) =>
               TreinoExercicio.fromJson(e as Map<String, dynamic>))
           .toList(),
-      criadoEm: DateTime.tryParse(json['criadoEm'] as String? ?? ''),
+      criadoEm: JsonUtils.dataHora(json['criadoEm']),
       diaSemana: json['diaSemana'] as int?,
     );
   }
 
+  /// Vazio enquanto o treino nao foi salvo: o servidor gera o id.
   final String id;
   final String usuarioId;
   final String nome;

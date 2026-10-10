@@ -1,40 +1,41 @@
 import 'package:get/get.dart';
 
+import '../../../../constants/endpoints.dart';
+import '../../../../enum/http_method.dart';
 import '../../../../models/exercicio.dart';
-import '../../../abstracts/mock_database_interface.dart';
+import '../../../abstracts/http_manager_interface.dart';
 import '../abstracts/biblioteca_repository_interface.dart';
 
-/// Implementacao mock da Biblioteca de Exercicios (tela 18).
+/// Repository da Biblioteca de Exercicios sobre a API (`/cadastro/exercicios`).
 class BibliotecaRepository implements BibliotecaRepositoryInterface {
-  final MockDatabaseInterface _db = Get.find();
+  final HttpManagerInterface _http = Get.find();
 
   @override
-  Future<List<Exercicio>> listarExercicios() async {
-    await Future<void>.delayed(const Duration(milliseconds: 220));
-    return _db.exercicios;
-  }
+  Future<List<Exercicio>> listarExercicios() => _listar(null);
 
   @override
-  Future<List<Exercicio>> listarFavoritos() async {
-    await Future<void>.delayed(const Duration(milliseconds: 220));
-    return _db.favoritos;
-  }
+  Future<List<Exercicio>> listarFavoritos() => _listar('favoritos');
 
   @override
-  Future<List<Exercicio>> listarRecentes() async {
-    await Future<void>.delayed(const Duration(milliseconds: 220));
-    return _db.recentes;
-  }
+  Future<List<Exercicio>> listarRecentes() => _listar('recentes');
 
   @override
   Future<Exercicio> alternarFavorito(String id) async {
-    await Future<void>.delayed(const Duration(milliseconds: 220));
-    return _db.alternarFavorito(id);
+    final dynamic corpo = await _http.restRequest(
+      path: Endpoints.favoritoDoExercicio(id),
+      method: HttpMethod.post,
+    );
+    return Exercicio.fromJson(corpo as Map<String, dynamic>);
   }
 
-  @override
-  Future<void> registrarAcesso(String id) async {
-    await Future<void>.delayed(const Duration(milliseconds: 220));
-    _db.registrarAcesso(id);
+  Future<List<Exercicio>> _listar(String? filtro) async {
+    final dynamic corpo = await _http.restRequest(
+      path: Endpoints.exercicios,
+      method: HttpMethod.get,
+      query: filtro == null ? null : <String, dynamic>{'filtro': filtro},
+    );
+    return (corpo as List<dynamic>)
+        .map((dynamic e) => Exercicio.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 }

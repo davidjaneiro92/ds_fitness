@@ -78,5 +78,5 @@ abstract class ExecucaoControllerInterface {
 
   /// Historico de carga do exercicio atual — abastece o modal de Evolucao de
   /// Carga (tela 22) aberto pelo menu da execucao.
-  List<RegistroCarga> registrosDoExercicioAtual();
+  Future<List<RegistroCarga>> registrosDoExercicioAtual();
 }

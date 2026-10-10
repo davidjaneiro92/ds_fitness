@@ -36,6 +36,4 @@ abstract class HistoricoControllerInterface {
   Future<void> carregarMais();
 
   void trocarFiltro(HistoricoFiltro filtro);
-
-  String nomeExercicio(String id);
 }

@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 
+import '../../../../components/feedback/app_snackbar.dart';
 import '../../../../core/abstracts/log_service_interface.dart';
 import '../../../../enum/pages_routes.dart';
 import '../../../../models/treino.dart';
 import '../../../../models/usuario.dart';
 import '../../../../routes/route_args.dart';
+import '../../../utils/error_messages.dart';
 import '../abstracts/home_controller_interface.dart';
 import '../abstracts/home_repository_interface.dart';
 
@@ -47,9 +49,11 @@ class HomeController extends GetxController
   Future<void> carregar() async {
     carregando.value = true;
     try {
-      final Treino? treino = await _repository.obterTreinoDoDia();
-      final int semana = await _repository.obterTreinosNaSemana();
-      final Usuario dadosUsuario = await _repository.obterUsuario();
+      final (Treino? treino, int semana, Usuario dadosUsuario) = await (
+        _repository.obterTreinoDoDia(),
+        _repository.obterTreinosNaSemana(),
+        _repository.obterUsuario(),
+      ).wait;
       treinoDoDia.value = treino;
       treinosNaSemana.value = semana;
       usuario.value = dadosUsuario;
@@ -60,6 +64,7 @@ class HomeController extends GetxController
         error: erro,
         stackTrace: stackTrace,
       );
+      AppSnackbar.erro(ErrorMessages.de(erro));
     } finally {
       carregando.value = false;
     }

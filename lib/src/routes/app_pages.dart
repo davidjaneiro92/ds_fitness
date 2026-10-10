@@ -11,6 +11,8 @@ import '../core/features/execucao/view/execucao_view.dart';
 import '../core/features/execucao/view/treino_concluido_view.dart';
 import '../core/features/exercicio_detalhe/binding/exercicio_detalhe_binding.dart';
 import '../core/features/exercicio_detalhe/view/exercicio_detalhe_view.dart';
+import '../core/features/exercicio_form/binding/exercicio_form_binding.dart';
+import '../core/features/exercicio_form/view/exercicio_form_view.dart';
 import '../core/features/historico/binding/historico_binding.dart';
 import '../core/features/historico/view/historico_view.dart';
 import '../core/features/home/binding/home_binding.dart';
@@ -134,6 +136,20 @@ abstract class AppPages {
       name: PagesRoutes.exercicioDetalhe.path,
       page: () => const ExercicioDetalheView(),
       binding: ExercicioDetalheBinding(),
+      transition: _transition,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.exercicioNovo.path,
+      page: () => const ExercicioFormView(),
+      binding: ExercicioFormBinding(),
+      transition: _transition,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.exercicioEditar.path,
+      page: () => const ExercicioFormView(),
+      binding: ExercicioFormBinding(),
       transition: _transition,
       transitionDuration: _duration,
     ),

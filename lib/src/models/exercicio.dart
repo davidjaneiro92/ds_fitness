@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart' show listEquals;
+
+import '../core/utils/json_utils.dart';
 import '../enum/grupo_muscular.dart';
 
 /// Exercicio do catalogo (planejamento §5).
@@ -10,11 +13,12 @@ class Exercicio {
     this.instrucoes = const <String>[],
     this.equipamento = '',
     this.favorito = false,
+    this.personalizado = false,
   });
 
   factory Exercicio.fromJson(Map<String, dynamic> json) {
     return Exercicio(
-      id: json['id'] as String,
+      id: JsonUtils.idParaTexto(json['id']),
       nome: json['nome'] as String,
       grupoPrimario: GrupoMuscular.fromSlug(json['grupoPrimario'] as String?),
       gruposSecundarios: (json['gruposSecundarios'] as List<dynamic>? ??
@@ -26,6 +30,7 @@ class Exercicio {
           .toList(),
       equipamento: json['equipamento'] as String? ?? '',
       favorito: json['favorito'] as bool? ?? false,
+      personalizado: json['personalizado'] as bool? ?? false,
     );
   }
 
@@ -36,6 +41,10 @@ class Exercicio {
   final List<String> instrucoes;
   final String equipamento;
   final bool favorito;
+
+  /// `true` quando o proprio usuario criou o exercicio — so ele pode alterar
+  /// ou excluir. Os do catalogo do sistema sao somente leitura.
+  final bool personalizado;
 
   /// Grupo primario seguido dos secundarios, sem repeticao.
   List<GrupoMuscular> get todosGrupos => <GrupoMuscular>[
@@ -53,6 +62,7 @@ class Exercicio {
     List<String>? instrucoes,
     String? equipamento,
     bool? favorito,
+    bool? personalizado,
   }) {
     return Exercicio(
       id: id,
@@ -62,6 +72,7 @@ class Exercicio {
       instrucoes: instrucoes ?? this.instrucoes,
       equipamento: equipamento ?? this.equipamento,
       favorito: favorito ?? this.favorito,
+      personalizado: personalizado ?? this.personalizado,
     );
   }
 
@@ -74,12 +85,32 @@ class Exercicio {
         'instrucoes': instrucoes,
         'equipamento': equipamento,
         'favorito': favorito,
+        'personalizado': personalizado,
       };
 
+  /// Igualdade por valor: o `Rx` so notifica quando o valor muda, e editar o
+  /// nome, os grupos ou o equipamento precisa contar como mudanca.
   @override
   bool operator ==(Object other) =>
-      other is Exercicio && other.id == id && other.favorito == favorito;
+      other is Exercicio &&
+      other.id == id &&
+      other.nome == nome &&
+      other.grupoPrimario == grupoPrimario &&
+      listEquals(other.gruposSecundarios, gruposSecundarios) &&
+      listEquals(other.instrucoes, instrucoes) &&
+      other.equipamento == equipamento &&
+      other.favorito == favorito &&
+      other.personalizado == personalizado;
 
   @override
-  int get hashCode => Object.hash(id, favorito);
+  int get hashCode => Object.hash(
+        id,
+        nome,
+        grupoPrimario,
+        Object.hashAll(gruposSecundarios),
+        Object.hashAll(instrucoes),
+        equipamento,
+        favorito,
+        personalizado,
+      );
 }

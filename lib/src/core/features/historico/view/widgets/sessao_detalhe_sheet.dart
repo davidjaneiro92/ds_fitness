@@ -9,7 +9,6 @@ import '../../../../../core/theme/tokens/spacing_tokens.dart';
 import '../../../../../core/theme/tokens/typography_tokens.dart';
 import '../../../../../models/serie_executada.dart';
 import '../../../../../models/sessao.dart';
-import '../../abstracts/historico_controller_interface.dart';
 
 /// Conteudo do modal de detalhe de uma sessao (tela 16 — Historico):
 /// resumo em `StatBox`s e series executadas agrupadas por exercicio.
@@ -18,9 +17,19 @@ class SessaoDetalheSheet extends StatelessWidget {
 
   final Sessao sessao;
 
+  /// O nome vem gravado em cada serie: o historico mostra o exercicio como
+  /// ele se chamava na hora do treino.
+  static String _nomeDoExercicio(List<SerieExecutada> series) {
+    for (final SerieExecutada serie in series) {
+      if (serie.exercicioNome.isNotEmpty) {
+        return serie.exercicioNome;
+      }
+    }
+    return 'Exercício';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final HistoricoControllerInterface controller = Get.find();
     final FormatServiceInterface format = Get.find();
 
     final Map<String, List<SerieExecutada>> porExercicio =
@@ -74,7 +83,7 @@ class SessaoDetalheSheet extends StatelessWidget {
         for (final MapEntry<String, List<SerieExecutada>> entry
             in porExercicio.entries) ...<Widget>[
           Text(
-            controller.nomeExercicio(entry.key),
+            _nomeDoExercicio(entry.value),
             style: TypographyTokens.bodyStrong,
           ),
           const Gap(SpacingTokens.sm),

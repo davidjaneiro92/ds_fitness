@@ -1,5 +1,7 @@
 /// Validadores de formulario (mensagens em pt-BR).
 abstract class Validators {
+  static const int tamanhoMinimoDaSenhaNova = 8;
+
   static final RegExp _email = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$');
 
   static String? obrigatorio(String? valor, {String campo = 'Campo'}) {
@@ -25,6 +27,19 @@ abstract class Validators {
     }
     if (valor.length < 6) {
       return 'A senha deve ter no mínimo 6 caracteres';
+    }
+    return null;
+  }
+
+  /// Senha de uma conta nova: a mesma regra do servidor (8 caracteres).
+  /// No login nao se valida o tamanho: quem decide se a senha esta certa e o
+  /// servidor.
+  static String? senhaNova(String? valor) {
+    if (valor == null || valor.isEmpty) {
+      return 'Crie uma senha';
+    }
+    if (valor.length < tamanhoMinimoDaSenhaNova) {
+      return 'A senha deve ter no mínimo $tamanhoMinimoDaSenhaNova caracteres';
     }
     return null;
   }

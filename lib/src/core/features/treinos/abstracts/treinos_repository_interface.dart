@@ -1,7 +1,6 @@
 import '../../../../models/treino.dart';
 
-/// Contrato do repository de Meus Treinos — fala apenas com o
-/// [MockDatabaseInterface].
+/// Contrato do repository de Meus Treinos — fala com a API (`/treinos`).
 abstract class TreinosRepositoryInterface {
   Future<List<Treino>> listar();
 

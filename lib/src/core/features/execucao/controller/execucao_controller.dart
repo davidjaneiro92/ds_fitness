@@ -12,6 +12,7 @@ import '../../../../models/serie_executada.dart';
 import '../../../../models/treino.dart';
 import '../../../../models/treino_exercicio.dart';
 import '../../../../routes/route_args.dart';
+import '../../../utils/error_messages.dart';
 import '../abstracts/execucao_controller_interface.dart';
 import '../abstracts/execucao_repository_interface.dart';
 import 'commands/alterar_carga_command.dart';
@@ -132,6 +133,7 @@ class ExecucaoController extends GetxController
       _iniciarTimerTreino();
     } catch (erro, stackTrace) {
       _log.error('Falha ao carregar treino para execucao', error: erro, stackTrace: stackTrace);
+      AppSnackbar.erro(ErrorMessages.de(erro));
     }
   }
 
@@ -256,12 +258,22 @@ class ExecucaoController extends GetxController
   }
 
   @override
-  List<RegistroCarga> registrosDoExercicioAtual() {
+  Future<List<RegistroCarga>> registrosDoExercicioAtual() async {
     final TreinoExercicio? atual = exercicioAtual;
     if (atual == null) {
       return const <RegistroCarga>[];
     }
-    return _repository.registrosDeCarga(atual.exercicioId);
+    try {
+      return await _repository.registrosDeCarga(atual.exercicioId);
+    } catch (erro, stackTrace) {
+      _log.error(
+        'Falha ao carregar a evolucao de carga',
+        error: erro,
+        stackTrace: stackTrace,
+      );
+      AppSnackbar.erro(ErrorMessages.de(erro));
+      return const <RegistroCarga>[];
+    }
   }
 
   @override
@@ -286,15 +298,28 @@ class ExecucaoController extends GetxController
     if (t == null) {
       return;
     }
-    _timerTreino?.cancel();
     final FinalizarTreinoCommand command = FinalizarTreinoCommand(
       treino: t,
       seriesExecutadas: seriesExecutadas,
       duracaoSeg: segundosTreino.value,
       tempoDescansoSeg: _tempoDescansoTotal,
     );
-    await command.execute();
-    estado.value = ExecucaoState.concluido;
+    try {
+      await command.execute();
+      _timerTreino?.cancel();
+      estado.value = ExecucaoState.concluido;
+    } catch (erro, stackTrace) {
+      // Sem salvar, o treino nao pode ser dado como concluido: a tela segue
+      // na ultima serie, e o botao "Proximo exercicio" tenta de novo.
+      _log.error(
+        'Falha ao salvar a sessao do treino',
+        error: erro,
+        stackTrace: stackTrace,
+      );
+      AppSnackbar.erro(
+        'Não foi possível salvar o treino. ${ErrorMessages.de(erro)}',
+      );
+    }
   }
 
   /// Retoma a sessao interrompida (planejamento §7): se existe um snapshot do

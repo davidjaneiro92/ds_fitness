@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../../components/feedback/app_snackbar.dart';
 import '../../../../core/abstracts/log_service_interface.dart';
 import '../../../../models/treino.dart';
+import '../../../utils/error_messages.dart';
 import '../abstracts/treinos_controller_interface.dart';
 import '../abstracts/treinos_repository_interface.dart';
 
@@ -33,8 +34,10 @@ class TreinosController extends GetxController
   Future<void> carregar() async {
     carregando.value = true;
     try {
-      final List<Treino> lista = await _repository.listar();
-      final Treino? doDia = await _repository.obterTreinoDoDia();
+      final (List<Treino> lista, Treino? doDia) = await (
+        _repository.listar(),
+        _repository.obterTreinoDoDia(),
+      ).wait;
       treinos.assignAll(lista);
       treinoDoDia.value = doDia;
     } catch (erro, stackTrace) {
@@ -43,6 +46,7 @@ class TreinosController extends GetxController
         error: erro,
         stackTrace: stackTrace,
       );
+      AppSnackbar.erro(ErrorMessages.de(erro));
     } finally {
       carregando.value = false;
     }
@@ -60,7 +64,7 @@ class TreinosController extends GetxController
         error: erro,
         stackTrace: stackTrace,
       );
-      AppSnackbar.erro('Não foi possível duplicar o treino');
+      AppSnackbar.erro(ErrorMessages.de(erro));
     }
   }
 
@@ -76,7 +80,7 @@ class TreinosController extends GetxController
         error: erro,
         stackTrace: stackTrace,
       );
-      AppSnackbar.erro('Não foi possível excluir o treino');
+      AppSnackbar.erro(ErrorMessages.de(erro));
     }
   }
 }

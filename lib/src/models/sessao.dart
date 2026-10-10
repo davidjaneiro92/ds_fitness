@@ -1,3 +1,4 @@
+import '../core/utils/json_utils.dart';
 import 'serie_executada.dart';
 
 /// Sessao de treino concluida — base do historico e das estatisticas.
@@ -18,15 +19,15 @@ class Sessao {
 
   factory Sessao.fromJson(Map<String, dynamic> json) {
     return Sessao(
-      id: json['id'] as String,
-      treinoId: json['treinoId'] as String,
-      treinoNome: json['treinoNome'] as String,
-      iniciadoEm: DateTime.parse(json['iniciadoEm'] as String),
-      finalizadoEm: DateTime.tryParse(json['finalizadoEm'] as String? ?? ''),
-      duracaoSeg: json['duracaoSeg'] as int? ?? 0,
-      tempoDescansoSeg: json['tempoDescansoSeg'] as int? ?? 0,
-      volumeTotal: (json['volumeTotal'] as num?)?.toDouble() ?? 0,
-      calorias: json['calorias'] as int? ?? 0,
+      id: JsonUtils.idParaTexto(json['id']),
+      treinoId: JsonUtils.idParaTexto(json['treinoId']),
+      treinoNome: json['treinoNome'] as String? ?? '',
+      iniciadoEm: JsonUtils.dataHora(json['iniciadoEm']) ?? DateTime.now(),
+      finalizadoEm: JsonUtils.dataHora(json['finalizadoEm']),
+      duracaoSeg: JsonUtils.inteiro(json['duracaoSeg']),
+      tempoDescansoSeg: JsonUtils.inteiro(json['tempoDescansoSeg']),
+      volumeTotal: JsonUtils.decimal(json['volumeTotal']),
+      calorias: JsonUtils.inteiro(json['calorias']),
       series: (json['series'] as List<dynamic>? ?? <dynamic>[])
           .map((dynamic e) =>
               SerieExecutada.fromJson(e as Map<String, dynamic>))

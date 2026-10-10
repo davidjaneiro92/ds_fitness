@@ -17,6 +17,8 @@ enum PagesRoutes {
   estatisticas('/estatisticas'),
   biblioteca('/biblioteca'),
   exercicioDetalhe('/exercicio'),
+  exercicioNovo('/exercicio/novo'),
+  exercicioEditar('/exercicio/editar'),
   perfil('/perfil');
 
   const PagesRoutes(this.path);

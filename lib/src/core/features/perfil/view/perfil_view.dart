@@ -79,8 +79,10 @@ class PerfilView extends GetView<PerfilControllerInterface> {
 
   Future<void> _selecionarObjetivo(ObjetivoTreino objetivo) async {
     Get.back<void>();
-    await controller.salvarObjetivo(objetivo);
-    AppSnackbar.success('Objetivo atualizado');
+    final bool salvo = await controller.salvarObjetivo(objetivo);
+    if (salvo) {
+      AppSnackbar.success('Objetivo atualizado');
+    }
   }
 
   void _abrirMedidas() {

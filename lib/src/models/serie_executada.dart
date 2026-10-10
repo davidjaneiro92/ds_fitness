@@ -1,3 +1,5 @@
+import '../core/utils/json_utils.dart';
+
 /// Serie efetivamente executada dentro de uma sessao (planejamento §5).
 class SerieExecutada {
   const SerieExecutada({
@@ -6,6 +8,7 @@ class SerieExecutada {
     required this.numeroSerie,
     required this.repeticoes,
     required this.carga,
+    this.exercicioNome = '',
     this.concluida = false,
     this.dificuldade = 0,
     this.observacao = '',
@@ -13,19 +16,24 @@ class SerieExecutada {
 
   factory SerieExecutada.fromJson(Map<String, dynamic> json) {
     return SerieExecutada(
-      id: json['id'] as String,
-      exercicioId: json['exercicioId'] as String,
-      numeroSerie: json['numeroSerie'] as int,
-      repeticoes: json['repeticoes'] as int,
-      carga: (json['carga'] as num).toDouble(),
+      id: JsonUtils.idParaTexto(json['id']),
+      exercicioId: JsonUtils.idParaTexto(json['exercicioId']),
+      exercicioNome: json['exercicioNome'] as String? ?? '',
+      numeroSerie: JsonUtils.inteiro(json['numeroSerie']),
+      repeticoes: JsonUtils.inteiro(json['repeticoes']),
+      carga: JsonUtils.decimal(json['carga']),
       concluida: json['concluida'] as bool? ?? false,
-      dificuldade: json['dificuldade'] as int? ?? 0,
+      dificuldade: JsonUtils.inteiro(json['dificuldade']),
       observacao: json['observacao'] as String? ?? '',
     );
   }
 
   final String id;
   final String exercicioId;
+
+  /// Nome do exercicio na hora da execucao (o servidor guarda junto com a
+  /// serie, para o historico nao mudar se o exercicio for renomeado).
+  final String exercicioNome;
   final int numeroSerie;
   final int repeticoes;
   final double carga;
@@ -48,6 +56,7 @@ class SerieExecutada {
     return SerieExecutada(
       id: id,
       exercicioId: exercicioId,
+      exercicioNome: exercicioNome,
       numeroSerie: numeroSerie,
       repeticoes: repeticoes ?? this.repeticoes,
       carga: carga ?? this.carga,
@@ -60,6 +69,7 @@ class SerieExecutada {
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
         'exercicioId': exercicioId,
+        'exercicioNome': exercicioNome,
         'numeroSerie': numeroSerie,
         'repeticoes': repeticoes,
         'carga': carga,

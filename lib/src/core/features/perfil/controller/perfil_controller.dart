@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
 
+import '../../../../components/feedback/app_snackbar.dart';
 import '../../../../enum/objetivo_treino.dart';
 import '../../../../models/registro_carga.dart';
 import '../../../../models/usuario.dart';
 import '../../../abstracts/log_service_interface.dart';
+import '../../../utils/error_messages.dart';
 import '../../auth/abstracts/auth_controller_interface.dart';
 import '../abstracts/perfil_controller_interface.dart';
 import '../abstracts/perfil_repository_interface.dart';
@@ -35,24 +37,31 @@ class PerfilController extends GetxController
   Future<void> carregar() async {
     carregando.value = true;
     try {
-      usuario.value = await _repository.obterUsuario();
-      medidas.value = await _repository.obterMedidas();
+      final (Usuario dadosUsuario, List<MedidaCorporal> dadosMedidas) = await (
+        _repository.obterUsuario(),
+        _repository.obterMedidas(),
+      ).wait;
+      usuario.value = dadosUsuario;
+      medidas.value = dadosMedidas;
     } catch (e, s) {
       _log.error('Falha ao carregar perfil', error: e, stackTrace: s);
+      AppSnackbar.erro(ErrorMessages.de(e));
     } finally {
       carregando.value = false;
     }
   }
 
   @override
-  Future<void> salvarObjetivo(ObjetivoTreino objetivo) async {
+  Future<bool> salvarObjetivo(ObjetivoTreino objetivo) async {
     try {
       final Usuario atualizado = await _repository
           .salvarUsuario(usuario.value.copyWith(objetivo: objetivo));
       usuario.value = atualizado;
+      return true;
     } catch (e, s) {
       _log.error('Falha ao salvar objetivo', error: e, stackTrace: s);
-      rethrow;
+      AppSnackbar.erro(ErrorMessages.de(e));
+      return false;
     }
   }
 

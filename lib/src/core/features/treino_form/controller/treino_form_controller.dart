@@ -41,6 +41,15 @@ class TreinoFormController extends GetxController
 
   String? _treinoIdAtual;
 
+  /// O formulario nao edita o dia da semana, mas o servidor grava o que
+  /// receber: sem devolver o valor carregado, salvar apagaria o dia do treino.
+  int? _diaSemana;
+
+  /// Estado do formulario no ultimo carregamento ou salvamento. Abrir um
+  /// treino e iniciar ou voltar sem editar nada e o caso comum, e nao precisa
+  /// de uma ida ao servidor.
+  String _estadoSalvo = '';
+
   /// Itens recem-adicionados ainda nao tem id do servidor: recebem um id local
   /// (`novo_N`), que o repository reconhece como "criar" ao salvar.
   int _proximoIdLocal = 1;
@@ -73,6 +82,8 @@ class TreinoFormController extends GetxController
       objetivo.value = treino.objetivo;
       descricao.value = treino.descricao;
       exercicios.assignAll(treino.exercicios);
+      _diaSemana = treino.diaSemana;
+      _estadoSalvo = _estadoAtual();
     } catch (erro, stackTrace) {
       _log.error('Falha ao carregar treino', error: erro, stackTrace: stackTrace);
       AppSnackbar.erro(ErrorMessages.de(erro));
@@ -158,10 +169,27 @@ class TreinoFormController extends GetxController
     exercicios.assignAll(atualizados);
   }
 
+  /// Resumo do que o formulario guarda, para saber se mudou desde o ultimo
+  /// carregamento ou salvamento.
+  String _estadoAtual() {
+    return <String>[
+      nome.value.trim(),
+      objetivo.value.name,
+      descricao.value.trim(),
+      for (final TreinoExercicio item in exercicios)
+        '${item.id}|${item.exercicioId}|${item.ordem}|${item.series}|'
+            '${item.repeticoes}|${item.cargaInicial}|${item.descansoSeg}|'
+            '${item.observacao}',
+    ].join('\n');
+  }
+
   @override
   Future<bool> salvar() async {
     if (!podeSalvar) {
       return false;
+    }
+    if (_treinoIdAtual != null && _estadoAtual() == _estadoSalvo) {
+      return true;
     }
     final String id = _treinoIdAtual ?? '';
     final Treino treino = Treino(
@@ -170,13 +198,16 @@ class TreinoFormController extends GetxController
       objetivo: objetivo.value,
       descricao: descricao.value.trim(),
       exercicios: exercicios.toList(),
+      diaSemana: _diaSemana,
     );
     try {
       final Treino salvo = await _repository.salvar(treino);
       _treinoIdAtual = salvo.id;
+      _diaSemana = salvo.diaSemana;
       // Troca os ids locais pelos do servidor: salvar de novo atualiza os
       // itens existentes em vez de criar copias.
       exercicios.assignAll(salvo.exercicios);
+      _estadoSalvo = _estadoAtual();
       return true;
     } catch (erro, stackTrace) {
       _log.error('Falha ao salvar treino', error: erro, stackTrace: stackTrace);

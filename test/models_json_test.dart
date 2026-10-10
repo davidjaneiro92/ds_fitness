@@ -149,6 +149,24 @@ void main() {
     expect(usuario.primeiroNome, 'David');
   });
 
+  test('Usuario sem peso e altura nao mostra zeros', () {
+    final Usuario sem = Usuario.fromJson(<String, dynamic>{
+      'id': 1,
+      'nome': 'Ana',
+      'email': 'ana@dsfitness.com',
+      'peso': 0,
+      'altura': 0,
+    });
+    final Usuario so = sem.copyWith(peso: 62);
+    final Usuario completo = sem.copyWith(peso: 78.4, altura: 1.78);
+
+    expect(sem.resumoFisico, 'Peso e altura não informados');
+    expect(sem.pesoLabel, '—');
+    expect(sem.alturaLabel, '—');
+    expect(so.resumoFisico, 'Peso: 62 kg · Altura: —');
+    expect(completo.resumoFisico, 'Peso: 78 kg · Altura: 1,78 m');
+  });
+
   test('EvolucaoDeCarga le os registros e o recorde, ou vem vazia', () {
     final EvolucaoDeCarga evolucao = EvolucaoDeCarga.fromJson(<String, dynamic>{
       'registros': <Map<String, dynamic>>[

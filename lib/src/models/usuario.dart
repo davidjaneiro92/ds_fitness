@@ -64,10 +64,19 @@ class Usuario {
         .toUpperCase();
   }
 
+  /// Ex.: "78 kg", ou "—" enquanto o peso nao foi informado (o servidor
+  /// devolve 0 para quem nunca preencheu).
+  String get pesoLabel => peso > 0 ? '${peso.toStringAsFixed(0)} kg' : '—';
+
+  /// Ex.: "1,78 m", ou "—" enquanto a altura nao foi informada.
+  String get alturaLabel => altura > 0
+      ? '${altura.toStringAsFixed(2).replaceAll('.', ',')} m'
+      : '—';
+
   /// Ex.: "Peso: 78 kg · Altura: 1,78 m".
-  String get resumoFisico =>
-      'Peso: ${peso.toStringAsFixed(0)} kg · Altura: '
-      '${altura.toStringAsFixed(2).replaceAll('.', ',')} m';
+  String get resumoFisico => peso <= 0 && altura <= 0
+      ? 'Peso e altura não informados'
+      : 'Peso: $pesoLabel · Altura: $alturaLabel';
 
   Usuario copyWith({
     String? nome,

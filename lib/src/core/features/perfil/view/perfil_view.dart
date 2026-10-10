@@ -43,15 +43,8 @@ class PerfilView extends GetView<PerfilControllerInterface> {
                 : format.data(usuario.dataNascimento!),
           ),
           _LinhaDado(label: 'Sexo', valor: usuario.sexo),
-          _LinhaDado(
-            label: 'Peso',
-            valor: '${usuario.peso.toStringAsFixed(0)} kg',
-          ),
-          _LinhaDado(
-            label: 'Altura',
-            valor:
-                '${usuario.altura.toStringAsFixed(2).replaceAll('.', ',')} m',
-          ),
+          _LinhaDado(label: 'Peso', valor: usuario.pesoLabel),
+          _LinhaDado(label: 'Altura', valor: usuario.alturaLabel),
           const Gap(SpacingTokens.lg),
           AppButton(label: 'Fechar', onPressed: () => Get.back<void>()),
         ],

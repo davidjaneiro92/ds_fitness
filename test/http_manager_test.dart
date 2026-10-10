@@ -3,46 +3,12 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:ds_fitness/src/core/abstracts/log_service_interface.dart';
-import 'package:ds_fitness/src/core/abstracts/storage_service_interface.dart';
 import 'package:ds_fitness/src/core/exceptions/api_exception.dart';
 import 'package:ds_fitness/src/core/services/http_manager.dart';
 import 'package:ds_fitness/src/enum/http_method.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Armazenamento em memoria no lugar do Hive.
-class _StorageFake implements StorageServiceInterface {
-  final Map<String, Object?> dados = <String, Object?>{};
-
-  @override
-  T? read<T>(String key) {
-    final Object? valor = dados[key];
-    return valor is T ? valor : null;
-  }
-
-  @override
-  Future<void> write(String key, Object? value) async => dados[key] = value;
-
-  @override
-  Future<void> remove(String key) async => dados.remove(key);
-
-  @override
-  Future<void> clear() async => dados.clear();
-}
-
-class _LogFake implements LogServiceInterface {
-  @override
-  void debug(String message, {Object? data}) {}
-
-  @override
-  void info(String message, {Object? data}) {}
-
-  @override
-  void warning(String message, {Object? error}) {}
-
-  @override
-  void error(String message, {Object? error, StackTrace? stackTrace}) {}
-}
+import 'support/fakes.dart';
 
 /// Servidor falso: cada chamada passa pelo [resposta], que devolve o status e
 /// o corpo, e fica registrada em [chamadas] para o teste conferir.
@@ -90,7 +56,7 @@ const String _refresh = '/api/v1/autenticacao/login/refresh-token';
     );
 
 void main() {
-  late _StorageFake storage;
+  late StorageFake storage;
   late _AdapterFake servidor;
   late HttpManager http;
   var sessaoExpirada = 0;
@@ -102,7 +68,7 @@ void main() {
       ..httpClientAdapter = adapter;
     return HttpManager(
       storage: storage,
-      log: _LogFake(),
+      log: LogFake(),
       dio: dio,
       dioDeRenovacao: dioDeRenovacao,
     )..aoExpirarSessao(() => sessaoExpirada++);
@@ -117,7 +83,7 @@ void main() {
   }
 
   setUp(() {
-    storage = _StorageFake();
+    storage = StorageFake();
     sessaoExpirada = 0;
   });
 

@@ -60,6 +60,11 @@ class ExecucaoController extends GetxController
 
   int _tempoDescansoTotal = 0;
 
+  /// `true` enquanto a sessao esta sendo enviada. O toque em "Finalizar
+  /// treino" e o auto-dismiss da serie concluida podem chegar os dois antes
+  /// da resposta do servidor, e cada envio grava uma sessao nova.
+  bool _finalizando = false;
+
   /// Observacao registrada antes de concluir a primeira serie do exercicio —
   /// aplicada na proxima serie concluida (ver [registrarObservacao]).
   String _observacaoPendente = '';
@@ -278,6 +283,13 @@ class ExecucaoController extends GetxController
 
   @override
   void avancarAposSerieConcluida() {
+    // O botao do overlay, o "voltar" e o auto-dismiss chamam este metodo: so a
+    // primeira chamada, com a serie concluida em pe, avanca. Um toque tardio
+    // no overlay (ou o timer logo apos o toque) pularia um exercicio ou
+    // finalizaria o treino antes da hora.
+    if (estado.value != ExecucaoState.serieConcluida) {
+      return;
+    }
     _timerSerieConcluida?.cancel();
     final Treino? t = treino.value;
     if (t == null) {
@@ -295,9 +307,10 @@ class ExecucaoController extends GetxController
 
   Future<void> _finalizarTreino() async {
     final Treino? t = treino.value;
-    if (t == null) {
+    if (t == null || _finalizando) {
       return;
     }
+    _finalizando = true;
     final FinalizarTreinoCommand command = FinalizarTreinoCommand(
       treino: t,
       seriesExecutadas: seriesExecutadas,
@@ -310,7 +323,7 @@ class ExecucaoController extends GetxController
       estado.value = ExecucaoState.concluido;
     } catch (erro, stackTrace) {
       // Sem salvar, o treino nao pode ser dado como concluido: a tela segue
-      // na ultima serie, e o botao "Proximo exercicio" tenta de novo.
+      // na ultima serie, e o botao "Finalizar treino" tenta de novo.
       _log.error(
         'Falha ao salvar a sessao do treino',
         error: erro,
@@ -319,6 +332,8 @@ class ExecucaoController extends GetxController
       AppSnackbar.erro(
         'Não foi possível salvar o treino. ${ErrorMessages.de(erro)}',
       );
+    } finally {
+      _finalizando = false;
     }
   }
 

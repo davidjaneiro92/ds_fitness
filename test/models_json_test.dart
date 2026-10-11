@@ -50,6 +50,28 @@ void main() {
     );
     expect(original.copyWith(instrucoes: <String>['Puxe.', 'Solte.']), isNot(original));
     expect(original.copyWith(favorito: true), isNot(original));
+    expect(original.copyWith(gifUrl: 'https://exemplo.test/a.gif'), isNot(original));
+  });
+
+  test('Exercicio le os links das imagens, ou vem sem imagem', () {
+    final Exercicio com = Exercicio.fromJson(<String, dynamic>{
+      'id': 1,
+      'nome': 'Supino Reto',
+      'grupoPrimario': 'peito',
+      'gifUrl': 'https://exemplo.test/supino.gif',
+      'miniaturaUrl': 'https://exemplo.test/supino-mini.gif',
+    });
+    final Exercicio sem = Exercicio.fromJson(<String, dynamic>{
+      'id': 2,
+      'nome': 'Exercicio do usuario',
+      'grupoPrimario': 'peito',
+      'gifUrl': '',
+    });
+
+    expect(com.gifUrl, 'https://exemplo.test/supino.gif');
+    expect(com.miniaturaUrl, 'https://exemplo.test/supino-mini.gif');
+    expect(sem.gifUrl, isEmpty);
+    expect(sem.miniaturaUrl, isEmpty, reason: 'campo ausente vira vazio');
   });
 
   test('Treino le os itens com o exercicio embutido', () {
@@ -76,6 +98,7 @@ void main() {
             'gruposSecundarios': <String>['triceps', 'ombro'],
             'equipamento': 'Barra',
             'instrucoes': <String>[],
+            'gifUrl': 'https://exemplo.test/supino.gif',
           },
         },
       ],
@@ -87,6 +110,11 @@ void main() {
     expect(treino.criadoEm!.isUtc, isFalse, reason: 'datas ficam no fuso do aparelho');
     expect(treino.exercicios.single.id, '11');
     expect(treino.exercicios.single.exercicioId, '1');
+    expect(
+      treino.exercicios.single.exercicio.gifUrl,
+      'https://exemplo.test/supino.gif',
+      reason: 'a tela de execucao mostra o GIF do exercicio embutido no treino',
+    );
     expect(treino.exercicios.single.cargaInicial, 32.5);
     expect(treino.totalSeries, 4);
     expect(treino.gruposLabel, 'Peito');

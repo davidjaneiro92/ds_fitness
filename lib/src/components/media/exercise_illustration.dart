@@ -1,12 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/tokens/color_tokens.dart';
 import '../../core/theme/tokens/spacing_tokens.dart';
 import '../../enum/grupo_muscular.dart';
 
-/// Placeholder ilustrativo de exercicio: sem asset nem rede, apenas
-/// gradiente + padrao geometrico sutil + icone Material coerente com o
-/// grupo muscular.
+/// Ilustracao do exercicio: o GIF do movimento (tela cheia) ou a miniatura
+/// (modo [compact], das listas), quando o exercicio tem imagem.
+///
+/// Sem imagem — exercicio criado pelo usuario —, enquanto ela carrega ou se o
+/// download falhar, mostra o placeholder: gradiente + padrao geometrico sutil
+/// + icone Material coerente com o grupo muscular.
 class ExerciseIllustration extends StatelessWidget {
   const ExerciseIllustration({
     required this.nome,
@@ -14,12 +18,20 @@ class ExerciseIllustration extends StatelessWidget {
     super.key,
     this.height = 180,
     this.compact = false,
+    this.gifUrl = '',
+    this.miniaturaUrl = '',
   });
 
   final String nome;
   final GrupoMuscular grupo;
   final double height;
   final bool compact;
+
+  /// GIF do movimento, usado fora do modo [compact].
+  final String gifUrl;
+
+  /// Versao pequena do GIF, usada no modo [compact].
+  final String miniaturaUrl;
 
   static const Map<GrupoMuscular, IconData> _icones = <GrupoMuscular, IconData>{
     GrupoMuscular.peito: Icons.sports_gymnastics_rounded,
@@ -40,22 +52,51 @@ class ExerciseIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (compact) {
-      return Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: ColorTokens.surfaceGradient,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(SpacingTokens.radiusButton),
-        ),
-        child: Icon(_icone, size: 24, color: ColorTokens.accent),
-      );
+    final Widget placeholder = compact ? _placeholderCompacto() : _placeholder();
+    final String url = compact ? miniaturaUrl : gifUrl;
+    if (url.isEmpty) {
+      return placeholder;
     }
 
+    // Os GIFs tem fundo branco: ficam num cartao branco arredondado, e nao
+    // soltos sobre o tema escuro.
+    final double raio =
+        compact ? SpacingTokens.radiusButton : SpacingTokens.radiusCard;
+    return Container(
+      width: compact ? 48 : double.infinity,
+      height: compact ? 48 : height,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(raio),
+      ),
+      child: CachedNetworkImage(
+        imageUrl: url,
+        fit: compact ? BoxFit.cover : BoxFit.contain,
+        fadeInDuration: const Duration(milliseconds: 200),
+        placeholder: (BuildContext context, String _) => placeholder,
+        errorWidget: (BuildContext context, String _, Object __) => placeholder,
+      ),
+    );
+  }
+
+  Widget _placeholderCompacto() {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: ColorTokens.surfaceGradient,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(SpacingTokens.radiusButton),
+      ),
+      child: Icon(_icone, size: 24, color: ColorTokens.accent),
+    );
+  }
+
+  Widget _placeholder() {
     return Container(
       height: height,
       width: double.infinity,

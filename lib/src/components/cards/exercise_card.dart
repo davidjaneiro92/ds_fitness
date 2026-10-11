@@ -37,6 +37,7 @@ class ExerciseCard extends StatelessWidget {
               nome: exercicio.nome,
               grupo: exercicio.grupoPrimario,
               compact: true,
+              miniaturaUrl: exercicio.miniaturaUrl,
             ),
             const SizedBox(width: SpacingTokens.sm + 4),
           ],

@@ -14,6 +14,8 @@ class Exercicio {
     this.equipamento = '',
     this.favorito = false,
     this.personalizado = false,
+    this.gifUrl = '',
+    this.miniaturaUrl = '',
   });
 
   factory Exercicio.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,8 @@ class Exercicio {
       equipamento: json['equipamento'] as String? ?? '',
       favorito: json['favorito'] as bool? ?? false,
       personalizado: json['personalizado'] as bool? ?? false,
+      gifUrl: json['gifUrl'] as String? ?? '',
+      miniaturaUrl: json['miniaturaUrl'] as String? ?? '',
     );
   }
 
@@ -45,6 +49,13 @@ class Exercicio {
   /// `true` quando o proprio usuario criou o exercicio — so ele pode alterar
   /// ou excluir. Os do catalogo do sistema sao somente leitura.
   final bool personalizado;
+
+  /// Link do GIF que mostra o movimento. Vazio quando o exercicio nao tem
+  /// imagem (os que o usuario cria): a tela mostra a ilustracao generica.
+  final String gifUrl;
+
+  /// Link da versao pequena do GIF, para as listas. Vazio quando nao ha.
+  final String miniaturaUrl;
 
   /// Grupo primario seguido dos secundarios, sem repeticao.
   List<GrupoMuscular> get todosGrupos => <GrupoMuscular>[
@@ -63,6 +74,8 @@ class Exercicio {
     String? equipamento,
     bool? favorito,
     bool? personalizado,
+    String? gifUrl,
+    String? miniaturaUrl,
   }) {
     return Exercicio(
       id: id,
@@ -73,6 +86,8 @@ class Exercicio {
       equipamento: equipamento ?? this.equipamento,
       favorito: favorito ?? this.favorito,
       personalizado: personalizado ?? this.personalizado,
+      gifUrl: gifUrl ?? this.gifUrl,
+      miniaturaUrl: miniaturaUrl ?? this.miniaturaUrl,
     );
   }
 
@@ -86,6 +101,8 @@ class Exercicio {
         'equipamento': equipamento,
         'favorito': favorito,
         'personalizado': personalizado,
+        'gifUrl': gifUrl,
+        'miniaturaUrl': miniaturaUrl,
       };
 
   /// Igualdade por valor: o `Rx` so notifica quando o valor muda, e editar o
@@ -100,7 +117,9 @@ class Exercicio {
       listEquals(other.instrucoes, instrucoes) &&
       other.equipamento == equipamento &&
       other.favorito == favorito &&
-      other.personalizado == personalizado;
+      other.personalizado == personalizado &&
+      other.gifUrl == gifUrl &&
+      other.miniaturaUrl == miniaturaUrl;
 
   @override
   int get hashCode => Object.hash(
@@ -112,5 +131,7 @@ class Exercicio {
         equipamento,
         favorito,
         personalizado,
+        gifUrl,
+        miniaturaUrl,
       );
 }

@@ -136,6 +136,7 @@ class _Cabecalho extends StatelessWidget {
           nome: exercicio.nome,
           grupo: exercicio.grupoPrimario,
           height: 220,
+          gifUrl: exercicio.gifUrl,
         ),
         const Gap(SpacingTokens.md),
         Text(exercicio.nome, style: TypographyTokens.screenTitle),

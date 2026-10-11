@@ -100,6 +100,7 @@ class _AddExercicioSheetState extends State<AddExercicioSheet> {
           nome: widget.exercicio.nome,
           grupo: widget.exercicio.grupoPrimario,
           height: 150,
+          gifUrl: widget.exercicio.gifUrl,
         ),
         const SizedBox(height: SpacingTokens.md),
         MuscleChipsRow(grupos: widget.exercicio.todosGrupos),

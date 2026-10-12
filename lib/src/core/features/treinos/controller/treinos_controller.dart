@@ -32,6 +32,12 @@ class TreinosController extends GetxController
 
   @override
   Future<void> carregar() async {
+    // A tela que abriu um fluxo recarrega a lista quando ele volta; se a pilha
+    // foi zerada nesse meio tempo (o fluxo terminou na pagina inicial), este
+    // controller ja foi descartado e nao ha o que recarregar.
+    if (isClosed) {
+      return;
+    }
     carregando.value = true;
     try {
       final (List<Treino> lista, Treino? doDia) = await (

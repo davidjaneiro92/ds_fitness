@@ -42,6 +42,16 @@ class _LogFake implements LogServiceInterface {
 
   @override
   void error(String message, {Object? error, StackTrace? stackTrace}) {}
+
+  @override
+  void requisicaoFalhou({
+    required String method,
+    required String path,
+    required String mensagem,
+    int? status,
+    int? duracaoMs,
+    String? detalhe,
+  }) {}
 }
 
 /// Servidor falso: cada chamada passa pelo [resposta], que devolve o status e

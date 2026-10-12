@@ -2,7 +2,7 @@
 enum GrupoMuscular {
   peito('peito', 'Peito'),
   costas('costas', 'Costas'),
-  ombro('ombro', 'Ombro'),
+  ombro('ombro', 'Ombros'),
   biceps('biceps', 'Bíceps'),
   triceps('triceps', 'Tríceps'),
   pernas('pernas', 'Pernas'),

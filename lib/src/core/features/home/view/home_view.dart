@@ -3,137 +3,92 @@ import 'package:get/get.dart';
 
 import '../../../../components/cards/app_card.dart';
 import '../../../../components/common/gap.dart';
-import '../../../../components/common/section_header.dart';
-import '../../../../components/feedback/app_snackbar.dart';
+import '../../../../components/common/page_header.dart';
 import '../../../../components/navbars/app_bottom_nav.dart';
 import '../../../../components/scaffolds/app_scaffold.dart';
 import '../../../../core/theme/tokens/color_tokens.dart';
 import '../../../../core/theme/tokens/spacing_tokens.dart';
 import '../../../../core/theme/tokens/typography_tokens.dart';
 import '../../../../enum/app_tab.dart';
-import '../../../../enum/pages_routes.dart';
 import '../../../../models/usuario.dart';
 import '../abstracts/home_controller_interface.dart';
-import 'widgets/atalho_tile.dart';
-import 'widgets/treino_do_dia_card.dart';
 
-/// Tela 4 — Home (planejamento §4): saudacao, treino do dia, progresso
-/// semanal e grid de atalhos.
-class HomeView extends StatelessWidget {
+/// Pagina inicial pos-login: a saudacao e duas escolhas — *Montar meu treino*
+/// (abre o fluxo de criar um treino) e *Treinar* (a lista de treinos, de onde se
+/// inicia um).
+class HomeView extends GetView<HomeControllerInterface> {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final HomeControllerInterface controller = Get.find();
-
     return AppScaffold(
       bottomNav: const AppBottomNav(current: AppTab.home),
-      body: Obx(() {
-        if (controller.carregando.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: ColorTokens.accent),
-          );
-        }
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Gap(SpacingTokens.md),
-              _Saudacao(usuario: controller.usuario.value),
-              const Gap(SpacingTokens.lg),
-              TreinoDoDiaCard(
-                treino: controller.treinoDoDia.value,
-                onIniciar: controller.iniciarTreino,
-              ),
-              const Gap(SpacingTokens.lg),
-              _ProgressoSemanal(
-                atual: controller.treinosNaSemana.value,
-                meta: controller.metaSemanal.value,
-              ),
-              const Gap(SpacingTokens.lg),
-              const SectionHeader(title: 'Atalhos'),
-              const _GridAtalhos(),
-              const Gap(SpacingTokens.lg),
-            ],
-          ),
-        );
-      }),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Gap(SpacingTokens.lg),
+            Obx(() {
+              final Usuario usuario = controller.usuario.value;
+              return PageHeader(
+                title: usuario.nome.trim().isEmpty
+                    ? 'Olá!'
+                    : 'Olá, ${usuario.primeiroNome}!',
+                subtitle: 'O que você quer fazer?',
+              );
+            }),
+            const Gap(SpacingTokens.md),
+            _OpcaoCard(
+              icon: Icons.assignment_outlined,
+              titulo: 'Montar meu treino',
+              descricao: 'Crie um treino personalizado do zero',
+              onTap: controller.montarTreino,
+            ),
+            const Gap(SpacingTokens.md),
+            _OpcaoCard(
+              icon: Icons.fitness_center_rounded,
+              titulo: 'Treinar',
+              descricao: 'Acessar meus treinos e iniciar um treino',
+              onTap: controller.treinar,
+            ),
+            const Gap(SpacingTokens.lg),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class _Saudacao extends StatelessWidget {
-  const _Saudacao({required this.usuario});
+/// Uma das escolhas da pagina inicial: icone, titulo, descricao e seta.
+class _OpcaoCard extends StatelessWidget {
+  const _OpcaoCard({
+    required this.icon,
+    required this.titulo,
+    required this.descricao,
+    required this.onTap,
+  });
 
-  final Usuario usuario;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Olá, ${usuario.primeiroNome}! 👋',
-                style: TypographyTokens.screenTitle,
-              ),
-              const Gap(SpacingTokens.xxs),
-              const Text('Bora treinar hoje?', style: TypographyTokens.bodyMuted),
-            ],
-          ),
-        ),
-        GestureDetector(
-          onTap: () => Get.toNamed<void>(PagesRoutes.perfil.path),
-          child: Container(
-            height: 44,
-            width: 44,
-            decoration: const BoxDecoration(
-              color: ColorTokens.accentSoft,
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              usuario.iniciais,
-              style: TypographyTokens.bodyStrong.copyWith(
-                color: ColorTokens.accent,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ProgressoSemanal extends StatelessWidget {
-  const _ProgressoSemanal({required this.atual, required this.meta});
-
-  final int atual;
-  final int meta;
+  final IconData icon;
+  final String titulo;
+  final String descricao;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final double progresso = meta == 0 ? 0 : atual / meta;
     return AppCard(
-      onTap: () => Get.toNamed<void>(PagesRoutes.estatisticas.path),
+      onTap: onTap,
+      padding: const EdgeInsets.all(SpacingTokens.lg - 4),
       child: Row(
         children: <Widget>[
+          Icon(icon, size: 44, color: ColorTokens.accent),
+          const Gap.horizontal(SpacingTokens.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
-                  'Progresso semanal',
-                  style: TypographyTokens.cardTitle,
-                ),
+                Text(titulo, style: TypographyTokens.cardTitle),
                 const Gap(SpacingTokens.xs),
-                Text('$atual de $meta treinos', style: TypographyTokens.bodyStrong),
-                const Gap(SpacingTokens.sm),
-                AppProgressBar(value: progresso),
+                Text(descricao, style: TypographyTokens.bodyMuted),
               ],
             ),
           ),
@@ -144,56 +99,6 @@ class _ProgressoSemanal extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _GridAtalhos extends StatelessWidget {
-  const _GridAtalhos();
-
-  static const double _espacamento = SpacingTokens.sm + SpacingTokens.xs;
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 3,
-      mainAxisSpacing: _espacamento,
-      crossAxisSpacing: _espacamento,
-      childAspectRatio: 1,
-      children: <Widget>[
-        AtalhoTile(
-          icon: Icons.fitness_center_rounded,
-          label: 'Meus Treinos',
-          onTap: () => Get.toNamed<void>(PagesRoutes.treinos.path),
-        ),
-        AtalhoTile(
-          icon: Icons.history_rounded,
-          label: 'Histórico',
-          onTap: () => Get.toNamed<void>(PagesRoutes.historico.path),
-        ),
-        AtalhoTile(
-          icon: Icons.grid_view_rounded,
-          label: 'Exercícios',
-          onTap: () => Get.toNamed<void>(PagesRoutes.biblioteca.path),
-        ),
-        AtalhoTile(
-          icon: Icons.insights_rounded,
-          label: 'Estatísticas',
-          onTap: () => Get.toNamed<void>(PagesRoutes.estatisticas.path),
-        ),
-        AtalhoTile(
-          icon: Icons.monitor_weight_outlined,
-          label: 'Peso',
-          onTap: () => AppSnackbar.info('Em breve'),
-        ),
-        AtalhoTile(
-          icon: Icons.calendar_month_rounded,
-          label: 'Calendário',
-          onTap: () => AppSnackbar.info('Em breve'),
-        ),
-      ],
     );
   }
 }

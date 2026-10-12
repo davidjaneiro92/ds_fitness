@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 
 import '../../../../components/buttons/app_button.dart';
 import '../../../../components/cards/treino_card.dart';
+import '../../../../components/common/page_header.dart';
 import '../../../../components/empty_states/empty_state.dart';
 import '../../../../components/feedback/app_confirm_dialog.dart';
 import '../../../../components/modals/app_modal_sheet.dart';
 import '../../../../components/navbars/app_bottom_nav.dart';
-import '../../../../components/navbars/app_navbar.dart';
 import '../../../../components/scaffolds/app_scaffold.dart';
 import '../../../../core/theme/tokens/color_tokens.dart';
 import '../../../../core/theme/tokens/spacing_tokens.dart';
@@ -18,8 +18,8 @@ import '../../../../models/treino.dart';
 import '../../../../routes/route_args.dart';
 import '../abstracts/treinos_controller_interface.dart';
 
-/// Tela 5 — Meus Treinos (planejamento §5): lista de treinos com acoes de
-/// duplicar/excluir e atalho para criar um novo treino.
+/// Aba *Treinos*: a lista de treinos, com o do dia destacado. Tocar abre o
+/// treino (para revisar e iniciar); pressao longa abre duplicar e excluir.
 class TreinosView extends StatelessWidget {
   const TreinosView({super.key});
 
@@ -28,70 +28,75 @@ class TreinosView extends StatelessWidget {
     final TreinosControllerInterface controller = Get.find();
 
     return AppScaffold(
-      navbar: AppNavbar(
-        title: 'Meus Treinos',
-        onBack: () => Get.offAllNamed<void>(PagesRoutes.home.path),
-      ),
       bottomNav: const AppBottomNav(current: AppTab.treinos),
       footer: AppButton(
         label: 'Novo treino',
         icon: Icons.add_rounded,
         onPressed: () => _abrirNovoTreino(controller),
       ),
-      body: Obx(() {
-        if (controller.carregando.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: ColorTokens.accent),
-          );
-        }
-        if (controller.treinos.isEmpty) {
-          return EmptyState(
-            icon: Icons.fitness_center_rounded,
-            title: 'Você ainda não criou nenhum treino',
-            message:
-                'Monte seu primeiro treino e comece a acompanhar sua evolução.',
-            actionLabel: 'Criar treino',
-            onAction: () => _abrirNovoTreino(controller),
-          );
-        }
-        final String? idDoDia = controller.treinoDoDia.value?.id;
-        return ListView.separated(
-          padding: const EdgeInsets.only(
-            top: SpacingTokens.md,
-            bottom: SpacingTokens.md,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const SizedBox(height: SpacingTokens.lg),
+          const PageHeader(
+            title: 'Meus treinos',
+            subtitle: 'Toque em um treino para ver e iniciar.',
           ),
-          itemCount: controller.treinos.length,
-          separatorBuilder: (BuildContext context, int index) =>
-              const SizedBox(height: SpacingTokens.sm),
-          itemBuilder: (BuildContext context, int index) {
-            final Treino treino = controller.treinos[index];
-            return TreinoCard(
-              treino: treino,
-              destaque: treino.id == idDoDia,
-              onTap: () => _abrirEdicao(controller, treino),
-              onLongPress: () => _abrirOpcoes(controller, treino),
-            );
-          },
-        );
-      }),
+          Expanded(
+            child: Obx(() {
+              if (controller.carregando.value) {
+                return const Center(
+                  child: CircularProgressIndicator(color: ColorTokens.accent),
+                );
+              }
+              if (controller.treinos.isEmpty) {
+                return EmptyState(
+                  icon: Icons.fitness_center_rounded,
+                  title: 'Você ainda não criou nenhum treino',
+                  message:
+                      'Monte seu primeiro treino e comece a acompanhar sua evolução.',
+                  actionLabel: 'Criar treino',
+                  onAction: () => _abrirNovoTreino(controller),
+                );
+              }
+              final String? idDoDia = controller.treinoDoDia.value?.id;
+              return ListView.separated(
+                padding: const EdgeInsets.only(bottom: SpacingTokens.md),
+                itemCount: controller.treinos.length,
+                separatorBuilder: (BuildContext context, int index) =>
+                    const SizedBox(height: SpacingTokens.sm),
+                itemBuilder: (BuildContext context, int index) {
+                  final Treino treino = controller.treinos[index];
+                  return TreinoCard(
+                    treino: treino,
+                    destaque: treino.id == idDoDia,
+                    onTap: () => _abrirTreino(controller, treino),
+                    onLongPress: () => _abrirOpcoes(controller, treino),
+                  );
+                },
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 
   Future<void> _abrirNovoTreino(TreinosControllerInterface controller) async {
     await Get.toNamed<void>(
       PagesRoutes.treinoNovo.path,
-      arguments: const TreinoFormArgs(),
+      arguments: const TreinoFormArgs(partiuDaLista: true),
     );
     await controller.carregar();
   }
 
-  Future<void> _abrirEdicao(
+  Future<void> _abrirTreino(
     TreinosControllerInterface controller,
     Treino treino,
   ) async {
     await Get.toNamed<void>(
-      PagesRoutes.treinoEditar.path,
-      arguments: TreinoFormArgs(treinoId: treino.id),
+      PagesRoutes.treinoRevisar.path,
+      arguments: TreinoFormArgs(treinoId: treino.id, partiuDaLista: true),
     );
     await controller.carregar();
   }

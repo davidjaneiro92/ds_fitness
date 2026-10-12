@@ -71,7 +71,7 @@ class _HistoricoViewState extends State<HistoricoView> {
   Widget build(BuildContext context) {
     return AppScaffold(
       navbar: const AppNavbar(title: 'Histórico'),
-      bottomNav: const AppBottomNav(current: AppTab.treinos),
+      bottomNav: const AppBottomNav(current: AppTab.evolucao),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

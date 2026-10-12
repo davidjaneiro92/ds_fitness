@@ -108,9 +108,9 @@ class HttpManager implements HttpManagerInterface {
     } on DioException catch (erro) {
       _registrar(method, path, erro.response?.statusCode, cronometro);
       if (autenticado && erro.response?.statusCode == 401) {
-        return _repetirAposRenovar(path, method, query, body, erro);
+        return _repetirAposRenovar(path, method, query, body, erro, cronometro);
       }
-      throw ApiException.deDio(erro);
+      throw _falhou(method, path, erro, cronometro);
     }
   }
 
@@ -120,19 +120,40 @@ class HttpManager implements HttpManagerInterface {
     Map<String, dynamic>? query,
     Object? body,
     DioException erroOriginal,
+    Stopwatch cronometro,
   ) async {
     final bool renovada = await _renovarSessao();
     if (!renovada) {
       _expirarSessao();
-      throw ApiException.deDio(erroOriginal);
+      throw _falhou(method, path, erroOriginal, cronometro);
     }
     try {
       final Response<dynamic> resposta =
           await _enviar(path, method, query, body, true);
       return _corpoDe(resposta);
     } on DioException catch (erro) {
-      throw ApiException.deDio(erro);
+      throw _falhou(method, path, erro, cronometro);
     }
+  }
+
+  /// Converte a falha em [ApiException] e a manda ao log remoto. So o
+  /// resultado final entra no log: o 401 que a renovacao resolve nao e erro.
+  ApiException _falhou(
+    HttpMethod method,
+    String path,
+    DioException erro,
+    Stopwatch cronometro,
+  ) {
+    final ApiException excecao = ApiException.deDio(erro);
+    _log.requisicaoFalhou(
+      method: method.valor,
+      path: path,
+      mensagem: excecao.mensagem,
+      status: excecao.statusCode,
+      duracaoMs: cronometro.elapsedMilliseconds,
+      detalhe: '${excecao.tipo.name}: ${erro.message ?? erro.type.name}',
+    );
+    return excecao;
   }
 
   Future<Response<dynamic>> _enviar(

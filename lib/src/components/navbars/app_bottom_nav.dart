@@ -5,7 +5,7 @@ import '../../core/theme/tokens/color_tokens.dart';
 import '../../core/theme/tokens/spacing_tokens.dart';
 import '../../enum/app_tab.dart';
 
-/// Barra inferior com 4 abas: Home · Treinos · Exercícios · Perfil.
+/// Barra inferior com 4 abas: Início · Treinos · Evolução · Perfil.
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({required this.current, super.key});
 
@@ -14,7 +14,7 @@ class AppBottomNav extends StatelessWidget {
   static const Map<AppTab, IconData> _icons = <AppTab, IconData>{
     AppTab.home: Icons.home_rounded,
     AppTab.treinos: Icons.fitness_center_rounded,
-    AppTab.exercicios: Icons.grid_view_rounded,
+    AppTab.evolucao: Icons.bar_chart_rounded,
     AppTab.perfil: Icons.person_rounded,
   };
 

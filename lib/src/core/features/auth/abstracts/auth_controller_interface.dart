@@ -21,7 +21,13 @@ abstract class AuthControllerInterface {
     required String sexo,
   });
 
+  /// Entrar por uma conta externa: ainda nao ha suporte na API. Os botoes
+  /// existem na tela de login, e tocar neles avisa que vem em breve.
   Future<void> loginComGoogle();
+
+  Future<void> loginComApple();
+
+  Future<void> loginComFacebook();
 
   Future<void> sair();
 }

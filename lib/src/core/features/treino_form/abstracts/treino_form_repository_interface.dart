@@ -1,4 +1,3 @@
-import '../../../../enum/grupo_muscular.dart';
 import '../../../../models/exercicio.dart';
 import '../../../../models/treino.dart';
 
@@ -11,7 +10,7 @@ abstract class TreinoFormRepositoryInterface {
   /// ids que o servidor gerou.
   Future<Treino> salvar(Treino treino);
 
-  /// Catalogo filtrado por grupo muscular (`GrupoMuscular.todos` devolve o
-  /// catalogo inteiro).
-  Future<List<Exercicio>> exerciciosPorGrupo(GrupoMuscular grupo);
+  /// O catalogo de exercicios que o usuario enxerga (os do sistema e os que
+  /// ele criou). A escolha por grupo muscular e feita no app.
+  Future<List<Exercicio>> listarExercicios();
 }

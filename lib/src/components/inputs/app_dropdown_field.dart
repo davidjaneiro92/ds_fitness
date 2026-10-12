@@ -29,10 +29,11 @@ class AppDropdownField<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(label, style: TypographyTokens.label),
+        Text(label, style: TypographyTokens.fieldLabel),
         const SizedBox(height: SpacingTokens.sm),
         Container(
           height: SpacingTokens.inputHeight,
+          alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: SpacingTokens.md),
           decoration: BoxDecoration(
             color: ColorTokens.bgSurfaceAlt,

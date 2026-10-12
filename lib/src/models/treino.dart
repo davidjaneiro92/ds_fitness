@@ -1,4 +1,5 @@
 import '../core/utils/json_utils.dart';
+import '../enum/dia_semana.dart';
 import '../enum/grupo_muscular.dart';
 import '../enum/objetivo_treino.dart';
 import 'treino_exercicio.dart';
@@ -44,6 +45,12 @@ class Treino {
   /// 1 = segunda ... 7 = domingo. Usado para escolher o treino do dia.
   final int? diaSemana;
 
+  /// O dia da semana como enum, ou `null` quando o treino nao tem dia marcado.
+  DiaSemana? get dia => DiaSemana.deNumero(diaSemana);
+
+  /// Ex.: "Treino A • Segunda", ou so o nome quando nao ha dia marcado.
+  String get titulo => dia == null ? nome : '$nome • ${dia!.nome}';
+
   int get totalExercicios => exercicios.length;
 
   int get totalSeries =>
@@ -60,9 +67,9 @@ class Treino {
     return resultado;
   }
 
-  /// Ex.: "Peito, Ombro, Tríceps".
+  /// Ex.: "Peito • Ombros • Tríceps".
   String get gruposLabel =>
-      grupos.isEmpty ? 'Sem exercícios' : grupos.map((g) => g.label).join(', ');
+      grupos.isEmpty ? 'Sem exercícios' : grupos.map((g) => g.label).join(' • ');
 
   /// Ex.: "6 exercícios".
   String get exerciciosLabel =>

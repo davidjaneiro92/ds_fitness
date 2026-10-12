@@ -7,6 +7,11 @@ version: 1.0.0+1
 environment:
   sdk: ^3.5.4
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
+
 dependencies:
   flutter:
     sdk: flutter
@@ -24,7 +29,6 @@ dependencies:
   # Formatacao pt-BR (datas, numeros)
   intl: ^0.19.0
   dio: ^5.11.1
-  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:
@@ -33,3 +37,122 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # Imagens que o app traz (pasta assets/). Dos exercicios entram so as do catalogo
+  # da API (Exercicio.imagem = pasta/arquivo): o GIF e a miniatura de cada um. Para
+  # incluir outro exercicio, acrescente os dois arquivos abaixo (specs/07-engenharia.md).
+  assets:
+    # Imagens dos grupos musculares, usadas como icone
+    - assets/img/muscles/
+    # GIFs dos exercicios do catalogo (um por exercicio; ver docs)
+    - assets/img/gifs/pectorals/barbell-bench-press.gif
+    - assets/img/gifs/pectorals/barbell-incline-bench-press.gif
+    - assets/img/gifs/pectorals/barbell-decline-bench-press.gif
+    - assets/img/gifs/pectorals/dumbbell-fly.gif
+    - assets/img/gifs/pectorals/cable-cross-over-variation.gif
+    - assets/img/gifs/pectorals/lever-seated-fly.gif
+    - assets/img/gifs/lats/cable-bar-lateral-pulldown.gif
+    - assets/img/gifs/upper-back/barbell-bent-over-row.gif
+    - assets/img/gifs/upper-back/cable-seated-row.gif
+    - assets/img/gifs/lats/pull-up.gif
+    - assets/img/gifs/lats/cable-straight-arm-pulldown-with-rope.gif
+    - assets/img/gifs/upper-back/lever-t-bar-row.gif
+    - assets/img/gifs/delts/dumbbell-seated-shoulder-press.gif
+    - assets/img/gifs/delts/dumbbell-lateral-raise.gif
+    - assets/img/gifs/delts/dumbbell-front-raise.gif
+    - assets/img/gifs/traps/dumbbell-shrug.gif
+    - assets/img/gifs/delts/barbell-upright-row.gif
+    - assets/img/gifs/biceps/barbell-curl.gif
+    - assets/img/gifs/biceps/dumbbell-alternate-biceps-curl.gif
+    - assets/img/gifs/biceps/dumbbell-hammer-curl.gif
+    - assets/img/gifs/biceps/barbell-preacher-curl.gif
+    - assets/img/gifs/triceps/cable-pushdown.gif
+    - assets/img/gifs/triceps/barbell-lying-triceps-extension-skull-crusher.gif
+    - assets/img/gifs/triceps/dumbbell-seated-triceps-extension.gif
+    - assets/img/gifs/triceps/triceps-dip.gif
+    - assets/img/gifs/triceps/dumbbell-kickback.gif
+    - assets/img/gifs/glutes/barbell-full-squat.gif
+    - assets/img/gifs/glutes/sled-45-leg-press.gif
+    - assets/img/gifs/quads/lever-leg-extension.gif
+    - assets/img/gifs/hamstrings/lever-lying-leg-curl.gif
+    - assets/img/gifs/glutes/dumbbell-lunge.gif
+    - assets/img/gifs/hamstrings/barbell-straight-leg-deadlift.gif
+    - assets/img/gifs/abs/crunch-floor.gif
+    - assets/img/gifs/abs/weighted-front-plank.gif
+    - assets/img/gifs/abs/reverse-crunch.gif
+    - assets/img/gifs/abs/hanging-leg-raise.gif
+    - assets/img/gifs/glutes/barbell-glute-bridge-two-legs-on-bench-male.gif
+    - assets/img/gifs/abductors/lever-seated-hip-abduction.gif
+    - assets/img/gifs/glutes/smith-sumo-squat.gif
+    - assets/img/gifs/glutes/cable-standing-hip-extension.gif
+    - assets/img/gifs/calves/lever-standing-calf-raise.gif
+    - assets/img/gifs/calves/lever-seated-calf-raise.gif
+    - assets/img/gifs/calves/sled-calf-press-on-leg-press.gif
+    - assets/img/gifs/calves/dumbbell-single-leg-calf-raise.gif
+    - assets/img/gifs/cardio/run-equipment.gif
+    - assets/img/gifs/cardio/stationary-bike-walk.gif
+    - assets/img/gifs/cardio/walk-elliptical-cross-trainer.gif
+    - assets/img/gifs/cardio/jump-rope.gif
+    - assets/img/gifs/forearms/barbell-wrist-curl.gif
+    - assets/img/gifs/forearms/barbell-palms-down-wrist-curl-over-a-bench.gif
+    - assets/img/gifs/forearms/barbell-reverse-wrist-curl.gif
+    - assets/img/gifs/quads/farmers-walk.gif
+    - assets/img/gifs/pectorals/dumbbell-bench-press.gif
+    - assets/img/gifs/pectorals/lever-chest-press.gif
+    - assets/img/gifs/pectorals/dumbbell-incline-fly.gif
+    # Miniaturas das listas (primeiro quadro)
+    - assets/img/imagens_estaticas/pectorals/barbell-bench-press.thumb.webp
+    - assets/img/imagens_estaticas/pectorals/barbell-incline-bench-press.thumb.webp
+    - assets/img/imagens_estaticas/pectorals/barbell-decline-bench-press.thumb.webp
+    - assets/img/imagens_estaticas/pectorals/dumbbell-fly.thumb.webp
+    - assets/img/imagens_estaticas/pectorals/cable-cross-over-variation.thumb.webp
+    - assets/img/imagens_estaticas/pectorals/lever-seated-fly.thumb.webp
+    - assets/img/imagens_estaticas/lats/cable-bar-lateral-pulldown.thumb.webp
+    - assets/img/imagens_estaticas/upper-back/barbell-bent-over-row.thumb.webp
+    - assets/img/imagens_estaticas/upper-back/cable-seated-row.thumb.webp
+    - assets/img/imagens_estaticas/lats/pull-up.thumb.webp
+    - assets/img/imagens_estaticas/lats/cable-straight-arm-pulldown-with-rope.thumb.webp
+    - assets/img/imagens_estaticas/upper-back/lever-t-bar-row.thumb.webp
+    - assets/img/imagens_estaticas/delts/dumbbell-seated-shoulder-press.thumb.webp
+    - assets/img/imagens_estaticas/delts/dumbbell-lateral-raise.thumb.webp
+    - assets/img/imagens_estaticas/delts/dumbbell-front-raise.thumb.webp
+    - assets/img/imagens_estaticas/traps/dumbbell-shrug.thumb.webp
+    - assets/img/imagens_estaticas/delts/barbell-upright-row.thumb.webp
+    - assets/img/imagens_estaticas/biceps/barbell-curl.thumb.webp
+    - assets/img/imagens_estaticas/biceps/dumbbell-alternate-biceps-curl.thumb.webp
+    - assets/img/imagens_estaticas/biceps/dumbbell-hammer-curl.thumb.webp
+    - assets/img/imagens_estaticas/biceps/barbell-preacher-curl.thumb.webp
+    - assets/img/imagens_estaticas/triceps/cable-pushdown.thumb.webp
+    - assets/img/imagens_estaticas/triceps/barbell-lying-triceps-extension-skull-crusher.thumb.webp
+    - assets/img/imagens_estaticas/triceps/dumbbell-seated-triceps-extension.thumb.webp
+    - assets/img/imagens_estaticas/triceps/triceps-dip.thumb.webp
+    - assets/img/imagens_estaticas/triceps/dumbbell-kickback.thumb.webp
+    - assets/img/imagens_estaticas/glutes/barbell-full-squat.thumb.webp
+    - assets/img/imagens_estaticas/glutes/sled-45-leg-press.thumb.webp
+    - assets/img/imagens_estaticas/quads/lever-leg-extension.thumb.webp
+    - assets/img/imagens_estaticas/hamstrings/lever-lying-leg-curl.thumb.webp
+    - assets/img/imagens_estaticas/glutes/dumbbell-lunge.thumb.webp
+    - assets/img/imagens_estaticas/hamstrings/barbell-straight-leg-deadlift.thumb.webp
+    - assets/img/imagens_estaticas/abs/crunch-floor.thumb.webp
+    - assets/img/imagens_estaticas/abs/weighted-front-plank.thumb.webp
+    - assets/img/imagens_estaticas/abs/reverse-crunch.thumb.webp
+    - assets/img/imagens_estaticas/abs/hanging-leg-raise.thumb.webp
+    - assets/img/imagens_estaticas/glutes/barbell-glute-bridge-two-legs-on-bench-male.thumb.webp
+    - assets/img/imagens_estaticas/abductors/lever-seated-hip-abduction.thumb.webp
+    - assets/img/imagens_estaticas/glutes/smith-sumo-squat.thumb.webp
+    - assets/img/imagens_estaticas/glutes/cable-standing-hip-extension.thumb.webp
+    - assets/img/imagens_estaticas/calves/lever-standing-calf-raise.thumb.webp
+    - assets/img/imagens_estaticas/calves/lever-seated-calf-raise.thumb.webp
+    - assets/img/imagens_estaticas/calves/sled-calf-press-on-leg-press.thumb.webp
+    - assets/img/imagens_estaticas/calves/dumbbell-single-leg-calf-raise.thumb.webp
+    - assets/img/imagens_estaticas/cardio/run-equipment.thumb.webp
+    - assets/img/imagens_estaticas/cardio/stationary-bike-walk.thumb.webp
+    - assets/img/imagens_estaticas/cardio/walk-elliptical-cross-trainer.thumb.webp
+    - assets/img/imagens_estaticas/cardio/jump-rope.thumb.webp
+    - assets/img/imagens_estaticas/forearms/barbell-wrist-curl.thumb.webp
+    - assets/img/imagens_estaticas/forearms/barbell-palms-down-wrist-curl-over-a-bench.thumb.webp
+    - assets/img/imagens_estaticas/forearms/barbell-reverse-wrist-curl.thumb.webp
+    - assets/img/imagens_estaticas/quads/farmers-walk.thumb.webp
+    - assets/img/imagens_estaticas/pectorals/dumbbell-bench-press.thumb.webp
+    - assets/img/imagens_estaticas/pectorals/lever-chest-press.thumb.webp
+    - assets/img/imagens_estaticas/pectorals/dumbbell-incline-fly.thumb.webp

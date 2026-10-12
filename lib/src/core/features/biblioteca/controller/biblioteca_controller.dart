@@ -9,6 +9,7 @@ import '../../../../models/exercicio.dart';
 import '../../../../routes/route_args.dart';
 import '../../../abstracts/log_service_interface.dart';
 import '../../../utils/error_messages.dart';
+import '../../../utils/texto_utils.dart';
 import '../abstracts/biblioteca_controller_interface.dart';
 import '../abstracts/biblioteca_repository_interface.dart';
 
@@ -94,12 +95,9 @@ class BibliotecaController extends GetxController
           base.where((Exercicio e) => e.todosGrupos.contains(grupo)).toList();
     }
 
-    final String termo = busca.value.trim().toLowerCase();
-    if (termo.isNotEmpty) {
-      base = base
-          .where((Exercicio e) => e.nome.toLowerCase().contains(termo))
-          .toList();
-    }
+    base = base
+        .where((Exercicio e) => TextoUtils.contem(e.nome, busca.value))
+        .toList();
 
     return base;
   }

@@ -1,21 +1,16 @@
 import 'package:get/get.dart';
 
-import '../../../../models/treino.dart';
 import '../../../../models/usuario.dart';
 
-/// Contrato do controller da Home (planejamento §4).
+/// Contrato do controller da Home: a saudacao e as duas escolhas — montar um
+/// treino ou treinar.
 abstract class HomeControllerInterface {
-  RxBool get carregando;
-
-  Rxn<Treino> get treinoDoDia;
-
-  RxInt get treinosNaSemana;
-
-  RxInt get metaSemanal;
-
+  /// O usuario logado (o mesmo do `AuthController`).
   Rx<Usuario> get usuario;
 
-  Future<void> carregar();
+  /// Abre o fluxo de montar um treino novo.
+  void montarTreino();
 
-  void iniciarTreino();
+  /// Abre a lista de treinos, de onde se inicia um.
+  void treinar();
 }

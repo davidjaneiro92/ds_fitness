@@ -125,7 +125,7 @@ class PerfilView extends GetView<PerfilControllerInterface> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      navbar: AppNavbar(showBack: true, onBack: () => Get.back<void>()),
+      navbar: const AppNavbar(showBack: false),
       bottomNav: const AppBottomNav(current: AppTab.perfil),
       body: Obx(() {
         if (controller.carregando.value) {
@@ -156,6 +156,13 @@ class PerfilView extends GetView<PerfilControllerInterface> {
                       label: 'Objetivos',
                       value: usuario.objetivo.label,
                       onTap: () => _abrirObjetivos(usuario.objetivo),
+                    ),
+                    const Divider(height: 1, color: ColorTokens.divider),
+                    PerfilMenuItem(
+                      icon: Icons.grid_view_rounded,
+                      label: 'Biblioteca de exercícios',
+                      onTap: () =>
+                          Get.toNamed<void>(PagesRoutes.biblioteca.path),
                     ),
                     const Divider(height: 1, color: ColorTokens.divider),
                     PerfilMenuItem(

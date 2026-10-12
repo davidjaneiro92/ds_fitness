@@ -1,9 +1,11 @@
+import 'package:ds_fitness/src/enum/dia_semana.dart';
 import 'package:ds_fitness/src/enum/grupo_muscular.dart';
 import 'package:ds_fitness/src/enum/objetivo_treino.dart';
 import 'package:ds_fitness/src/models/exercicio.dart';
 import 'package:ds_fitness/src/models/registro_carga.dart';
 import 'package:ds_fitness/src/models/sessao.dart';
 import 'package:ds_fitness/src/models/treino.dart';
+import 'package:ds_fitness/src/models/treino_exercicio.dart';
 import 'package:ds_fitness/src/models/usuario.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -50,28 +52,49 @@ void main() {
     );
     expect(original.copyWith(instrucoes: <String>['Puxe.', 'Solte.']), isNot(original));
     expect(original.copyWith(favorito: true), isNot(original));
-    expect(original.copyWith(gifUrl: 'https://exemplo.test/a.gif'), isNot(original));
+    expect(
+      original.copyWith(imagem: 'pectorals/barbell-bench-press'),
+      isNot(original),
+    );
   });
 
-  test('Exercicio le os links das imagens, ou vem sem imagem', () {
+  test('Exercicio le a chave da imagem, ou vem sem imagem', () {
     final Exercicio com = Exercicio.fromJson(<String, dynamic>{
       'id': 1,
       'nome': 'Supino Reto',
       'grupoPrimario': 'peito',
-      'gifUrl': 'https://exemplo.test/supino.gif',
-      'miniaturaUrl': 'https://exemplo.test/supino-mini.gif',
+      'imagem': 'pectorals/barbell-bench-press',
     });
-    final Exercicio sem = Exercicio.fromJson(<String, dynamic>{
+    final Exercicio vazio = Exercicio.fromJson(<String, dynamic>{
       'id': 2,
       'nome': 'Exercicio do usuario',
       'grupoPrimario': 'peito',
-      'gifUrl': '',
+      'imagem': '',
+    });
+    final Exercicio ausente = Exercicio.fromJson(<String, dynamic>{
+      'id': 3,
+      'nome': 'Exercicio de uma API mais antiga',
+      'grupoPrimario': 'peito',
     });
 
-    expect(com.gifUrl, 'https://exemplo.test/supino.gif');
-    expect(com.miniaturaUrl, 'https://exemplo.test/supino-mini.gif');
-    expect(sem.gifUrl, isEmpty);
-    expect(sem.miniaturaUrl, isEmpty, reason: 'campo ausente vira vazio');
+    expect(com.imagem, 'pectorals/barbell-bench-press');
+    expect(vazio.imagem, isEmpty);
+    expect(ausente.imagem, isEmpty, reason: 'campo ausente vira vazio');
+  });
+
+  test('Exercicio mostra os grupos separados por ponto', () {
+    const Exercicio supino = Exercicio(
+      id: '1',
+      nome: 'Supino Reto',
+      grupoPrimario: GrupoMuscular.peito,
+      gruposSecundarios: <GrupoMuscular>[
+        GrupoMuscular.triceps,
+        GrupoMuscular.ombro,
+        GrupoMuscular.peito,
+      ],
+    );
+
+    expect(supino.gruposLabel, 'Peito • Tríceps • Ombros');
   });
 
   test('Treino le os itens com o exercicio embutido', () {
@@ -98,7 +121,7 @@ void main() {
             'gruposSecundarios': <String>['triceps', 'ombro'],
             'equipamento': 'Barra',
             'instrucoes': <String>[],
-            'gifUrl': 'https://exemplo.test/supino.gif',
+            'imagem': 'pectorals/barbell-bench-press',
           },
         },
       ],
@@ -111,13 +134,56 @@ void main() {
     expect(treino.exercicios.single.id, '11');
     expect(treino.exercicios.single.exercicioId, '1');
     expect(
-      treino.exercicios.single.exercicio.gifUrl,
-      'https://exemplo.test/supino.gif',
+      treino.exercicios.single.exercicio.imagem,
+      'pectorals/barbell-bench-press',
       reason: 'a tela de execucao mostra o GIF do exercicio embutido no treino',
     );
     expect(treino.exercicios.single.cargaInicial, 32.5);
     expect(treino.totalSeries, 4);
     expect(treino.gruposLabel, 'Peito');
+    expect(treino.dia, DiaSemana.segunda);
+    expect(treino.titulo, 'Peito e Tríceps • Segunda');
+  });
+
+  test('Treino sem dia marcado tem so o nome como titulo', () {
+    final Treino treino = Treino.fromJson(<String, dynamic>{
+      'id': 4,
+      'nome': 'Treino antigo',
+      'objetivo': 'hipertrofia',
+      'descricao': '',
+    });
+
+    expect(treino.diaSemana, isNull);
+    expect(treino.dia, isNull);
+    expect(treino.titulo, 'Treino antigo');
+  });
+
+  test('TreinoExercicio resume o que se configura: series, reps e descanso', () {
+    const Exercicio supino = Exercicio(
+      id: '1',
+      nome: 'Supino Reto',
+      grupoPrimario: GrupoMuscular.peito,
+    );
+    const TreinoExercicio quatro = TreinoExercicio(
+      id: '1',
+      exercicio: supino,
+      ordem: 0,
+      descansoSeg: 90,
+    );
+
+    expect(quatro.resumo, '4 séries • 12 reps • 90 s');
+    expect(quatro.copyWith(series: 1).resumo, '1 série • 12 reps • 90 s');
+  });
+
+  test('DiaSemana usa a numeracao da API (1 = segunda ... 7 = domingo)', () {
+    expect(DiaSemana.deNumero(1), DiaSemana.segunda);
+    expect(DiaSemana.deNumero(7), DiaSemana.domingo);
+    expect(DiaSemana.deNumero(0), isNull);
+    expect(DiaSemana.deNumero(8), isNull);
+    expect(DiaSemana.deNumero(null), isNull);
+    expect(DiaSemana.sabado.abreviacao, 'Sáb');
+    expect(DiaSemana.terca.nome, 'Terça');
+    expect(DiaSemana.hoje().numero, DateTime.now().weekday);
   });
 
   test('Sessao le as series com o nome do exercicio e os recordes', () {

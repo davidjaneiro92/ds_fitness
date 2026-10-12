@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 
 import '../../../../constants/endpoints.dart';
-import '../../../../enum/grupo_muscular.dart';
 import '../../../../enum/http_method.dart';
 import '../../../../models/exercicio.dart';
 import '../../../../models/treino.dart';
@@ -12,7 +11,8 @@ import '../../../utils/json_utils.dart';
 import '../abstracts/treino_form_repository_interface.dart';
 
 /// Repository da feature `treino_form` sobre a API (`/treinos` e
-/// `/cadastro/exercicios`).
+/// `/cadastro/exercicios`). O corpo do treino leva o dia da semana junto com o
+/// nome, o objetivo, a descricao e os exercicios.
 class TreinoFormRepository implements TreinoFormRepositoryInterface {
   final HttpManagerInterface _http = Get.find();
 
@@ -44,13 +44,10 @@ class TreinoFormRepository implements TreinoFormRepositoryInterface {
   }
 
   @override
-  Future<List<Exercicio>> exerciciosPorGrupo(GrupoMuscular grupo) async {
+  Future<List<Exercicio>> listarExercicios() async {
     final dynamic corpo = await _http.restRequest(
       path: Endpoints.exercicios,
       method: HttpMethod.get,
-      query: grupo == GrupoMuscular.todos
-          ? null
-          : <String, dynamic>{'grupo': grupo.slug},
     );
     return (corpo as List<dynamic>)
         .map((dynamic e) => Exercicio.fromJson(e as Map<String, dynamic>))

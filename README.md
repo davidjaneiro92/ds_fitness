@@ -1,13 +1,8 @@
-# direction_app1 — Template Flutter Corporativo
+# DS Fitness
 
-Template Flutter corporativo reutilizável, construído por engenharia reversa do
-aplicativo legado `controle_separacao_aplicativo` — **preservando a stack e os
-padrões que já funcionam em produção** (GetX, Dio, Hive), sem acoplamento às
-regras de negócio originais.
+Aplicativo Flutter para **montar treinos de musculação**, executá-los série a série (com cronômetro de descanso e o GIF do movimento) e acompanhar a evolução. É um cliente fino da API `ds_fitnes_back` (repositório irmão), que guarda as contas, os treinos, os exercícios e as sessões.
 
-A documentação profunda de arquitetura, infraestrutura, design system e
-convenções vive em [`specs/`](specs/00-overview/README.md). Este README cobre
-o essencial para rodar, entender a estrutura e gerar builds.
+A documentação de projeto — arquitetura, regras de negócio, fluxos e contrato com a API — é o **SDD** em [`specs/`](specs/README.md), e é normativa. Este README cobre o essencial para rodar, entender a estrutura e gerar builds.
 
 ---
 
@@ -16,6 +11,7 @@ o essencial para rodar, entender a estrutura e gerar builds.
 - **Flutter**: `3.24.5` (canal stable) — **versão pinada**, não atualizar sem alinhar com o time.
 - **Dart**: `3.5.4`
 - **DevTools**: `2.37.3`
+- A API `ds_fitnes_back` no ar (ver [Configuração de Ambiente / API](#configuração-de-ambiente--api)).
 
 ```bash
 flutter --version
@@ -27,23 +23,13 @@ Caso precise instalar o Flutter, siga as instruções oficiais no [site do Flutt
 
 ## Stack e Bibliotecas Principais
 
-Stack oficial preservada do legado (ver `specs/07-template-blueprint/`):
-
 - **`get`**: gerenciamento de estado, injeção de dependência e navegação (GetX).
-- **`dio`**: cliente HTTP, encapsulado em `HttpManager`.
-- **`hive` / `hive_flutter`**: persistência/cache local e configuração de ambiente em runtime.
-- **`connectivity_plus`**: detecção de conectividade (online/offline) para o fluxo de sincronização.
-- **`logger`**: logging estruturado (local + remoto via `LogServices`).
-- **`oktoast` / `fluttertoast`**: feedback e mensagens de toast.
-- **`pluto_grid`**: data grid com filtros/paginação.
-- **`phosphor_flutter`**: ícones (identidade visual Direction).
-- **`google_fonts`**: tipografia Sora/Manrope (Design System Direction).
-- **`intl`**: i18n e formatação pt-BR (datas, números, moeda).
-- **`url_launcher`**: ações de contato (`tel:`, `wa.me`, `mailto:`).
-- **`barcode_scan2`**, **`image_picker`**, **`mask_text_input_formatter`**, **`tab_container`**, **`flutter_speed_dial`**: utilitários pontuais.
+- **`dio`**: cliente HTTP, encapsulado em `HttpManager` (token, renovação da sessão, `ApiException`).
+- **`hive` / `hive_flutter`**: armazenamento local (sessão, execução em andamento, fila de erros).
+- **`logger`**: log no console; os erros também vão para o log da API (`ErrorReporter`).
+- **`intl`**: formatação pt-BR (datas, números, durações).
 
-Catálogo completo e motivação de cada biblioteca:
-[`specs/05-libraries/library-deep-catalog.md`](specs/05-libraries/library-deep-catalog.md).
+Não há pacote de ícones, de fontes nem de gráficos: os ícones são do Material e o resto é desenhado com `CustomPainter`. As imagens são as de `assets/`. Detalhes e versões em [`specs/07-engenharia.md`](specs/07-engenharia.md).
 
 ---
 
@@ -51,75 +37,58 @@ Catálogo completo e motivação de cada biblioteca:
 
 ```
 lib/
-├── main.dart              Bootstrap: Hive, DI (Get.put/lazyPut), rotas
+├── main.dart              Bootstrap: Hive, serviços globais, handlers de erro, AuthController, rotas
 └── src/
-    ├── components/         Widgets reutilizáveis (app, common, home, loading, scaffold...)
-    ├── constants/          Endpoints da API, ambientes (AppEnvironment/AppConfig)
+    ├── components/         Design system: widgets reutilizáveis, por categoria
+    ├── constants/          Endpoints da API, ambiente (AppEnvironment) e imagens (AppAssets)
     ├── core/
-    │   ├── abstracts/       Interfaces dos services transversais (Http, Hive, Log, Sync...)
-    │   ├── services/        Implementações dos services (HttpManager, HiveServices...)
-    │   ├── theme/           Design tokens e tema (ColorTokens, AppTheme)
-    │   ├── utils/           Utilitários gerais
-    │   └── features/        Features por domínio, cada uma com controller/repository/view/abstracts:
-    │       ├── login/          Autenticação (JWT + refresh)
-    │       ├── home/           Dashboard (resumo do dia, comissão, urgentes)
-    │       ├── orcamento/       Fluxo de Novo Orçamento (5 etapas — ver abaixo)
-    │       ├── catalogo/        Catálogo de produtos (sincronização incremental)
-    │       ├── clientes/        Carteira de clientes do usuário logado
-    │       ├── pedidos/         Lista e detalhe de pedidos
-    │       ├── comissoes/       Comissões do representante
-    │       ├── agenda/          Eventos de agenda (somente leitura)
-    │       ├── novo_pedido/     Estado de carrinho legado (em descontinuação)
-    │       └── splash_screen/   Tela de splash inicial
-    ├── enum/                Enums (rotas, status, etc.)
-    ├── models/              Modelos de dados (fromJson/toJson manual)
-    └── routes/              Definição de rotas (GetPages)
+    │   ├── abstracts/       Interfaces dos serviços (Http, Storage, Log, Format, ErrorReporter)
+    │   ├── services/        Implementações (HttpManager, StorageService, LogService, ErrorReporter...)
+    │   ├── theme/           Tokens (cor, espaçamento, tipografia) e AppTheme
+    │   ├── utils/           ErrorMessages, JsonUtils, TextoUtils, Validators
+    │   └── features/        Uma pasta por feature, cada uma com abstracts/binding/controller/repository/view:
+    │       ├── auth/ splash/ home/ treinos/ treino_form/
+    │       ├── biblioteca/ exercicio_detalhe/ exercicio_form/
+    │       └── execucao/ historico/ estatisticas/ perfil/
+    ├── enum/                Rotas, abas, dia da semana, grupos musculares...
+    ├── models/              Modelos de dados (fromJson/toJson manuais)
+    └── routes/              AppPages (rotas) e route_args (argumentos tipados)
+assets/img/                  GIFs e miniaturas dos exercícios, imagens dos músculos
+specs/                       SDD (documentação de projeto)
+test/                        Testes automatizados
 ```
 
-Cada feature segue o padrão **interface → controller → repository → view**
-(GetX), com `abstracts/` definindo o contrato (`XControllerInterface`,
-`XRepositoryInterface`) para permitir fakes em teste sem mocks pesados.
+Cada feature segue o padrão **interface → controller → repository → view** (GetX), com `abstracts/` definindo o contrato (`XControllerInterface`, `XRepositoryInterface`) para permitir fakes em teste sem mocks pesados. A árvore completa, com o que cada pasta faz, está em [`specs/03-estrutura-pastas.md`](specs/03-estrutura-pastas.md).
 
 ---
 
-## Fluxo de Orçamento
+## O Fluxo do App
 
-A feature principal do app é o fluxo de **Novo Orçamento**
-(`lib/src/core/features/orcamento/`), em 5 etapas dentro de um único
-`IndexedStack` (sem troca de rota):
-
-1. **Cliente** — seleção/busca do cliente responsável pelo orçamento.
-2. **Itens** — escolha de produtos (busca + filtros + multi-seleção) e ajuste
-   de quantidade/desconto individual por item.
-3. **Transportadora** — opcional; não bloqueia avanço se não houver nenhuma cadastrada.
-4. **Forma de pagamento** — opcional; mesma regra de não bloqueio.
-5. **Observação** — texto livre opcional, seguido de "Finalizar".
-
-Descontos negociados (gerais, aplicados a todos os itens) são **somados** ao
-desconto individual de cada item (modelo aditivo), com lista de descontos
-aplicados e opção de exclusão. Todos os endpoints consumidos são os mesmos da
-API Direction real (REST/JWT) — sem mocks.
+Login → Início (*Montar meu treino* / *Treinar*) → **Novo treino** (dia da semana, nome, objetivo, descrição) → **Grupos musculares** (seleção múltipla) → **Selecionar exercício** → **Configurar exercício** (séries, repetições, descanso, com o GIF) → **Revisar e salvar**. A barra inferior tem Início, Treinos, Evolução e Perfil; a biblioteca de exercícios abre pelo Perfil e o histórico, pela Evolução. Os botões de entrar com Google, Apple e Facebook estão na tela de login e ainda não têm função. As regras de cada tela estão em [`specs/05-regras-de-negocio.md`](specs/05-regras-de-negocio.md) e os diagramas em [`specs/06-fluxos.md`](specs/06-fluxos.md).
 
 ---
 
 ## Configuração de Ambiente / API
 
-A URL base da API (`lib/src/constants/app_environment.dart`) é resolvida
-**automaticamente** por plataforma e modo de build (`AppConfig.active`):
+O endereço da API (`lib/src/constants/app_environment.dart`) vem de `--dart-define=API_BASE_URL=...` e, sem ele, aponta para o servidor de desenvolvimento na própria máquina:
 
-| Onde roda | Ambiente usado |
+| Onde roda | Endereço padrão |
 |---|---|
-| Celular físico (Android/iOS) | **Produção** (`api.directionsolution.com.br`), sempre — mesmo em build debug. |
-| Web / Windows / macOS / Linux, `flutter run` (debug) | **Local** (`http://localhost:5162`) — para desenvolver com a API rodando na própria máquina. |
-| Web / Windows / macOS / Linux, build `--release` | **Produção** — evita apontar um build distribuído para um cliente ao `localhost`. |
+| Web, Windows, macOS, Linux, iOS simulator | `http://localhost:5270` |
+| Android emulator | `http://10.0.2.2:5270` (o emulador enxerga o host por esse endereço) |
+| Aparelho físico | informe `--dart-define=API_BASE_URL=http://<ip-do-pc>:5270` (mesma rede Wi-Fi) |
 
-Essa resolução automática pode ser sobrescrita, em ordem de prioridade:
+```bash
+flutter run --dart-define=API_BASE_URL=http://192.168.0.10:5270
+```
 
-1. Build: `flutter run --dart-define=API_BASE_URL=https://...`
-2. Runtime: valor salvo na box Hive `variaves_ambiente` (chave `baseUrl`) —
-   base para uma futura tela de seleção de ambiente/cliente.
+`--dart-define=APP_VERSION=1.2.3` informa a versão que acompanha cada erro enviado ao log da API (padrão `1.0.0`). No desenvolvimento o CORS da API é aberto, o que permite rodar o app na web.
 
-Detalhes: [`specs/02-infrastructure/configuration.md`](specs/02-infrastructure/configuration.md).
+---
+
+## Imagens dos Exercícios
+
+Os GIFs e as miniaturas ficam **dentro do app**: a API informa só a chave da imagem de cada exercício (`imagem`, ex.: `pectorals/barbell-bench-press`) e o app monta o caminho do arquivo. A pasta `assets/img/` tem 1.323 exercícios (mais de 400 MB); só os do catálogo da API (55) estão declarados no `pubspec.yaml`. Para incluir outro, declare o GIF e a miniatura — ver [`specs/07-engenharia.md`](specs/07-engenharia.md#imagens-dos-exercícios).
 
 ---
 
@@ -137,8 +106,8 @@ flutter run -d android-emulator
 # Analisar (deve retornar "No issues found!")
 flutter analyze
 
-# Rodar toda a suíte de testes
-flutter test
+# Rodar toda a suíte de testes (um por vez: em paralelo pode faltar memória)
+flutter test --concurrency=1
 ```
 
 ---
@@ -340,7 +309,7 @@ flutter run -d macos --release
 ```bash
 flutter build macos
 ```
-Gerado em `build/macos/Build/Products/Release/direction_app1.app`.
+Gerado em `build/macos/Build/Products/Release/ds_fitness.app`.
 
 ### 4.4 Rodar em outro Mac
 Como o app não é assinado/notarizado pela Apple, o **Gatekeeper** vai
@@ -349,7 +318,7 @@ Mac de destino: clique com o botão direito no `.app` > **Abrir** (em vez de
 duplo clique) e confirme — ou, via terminal, remova o atributo de
 quarentena:
 ```bash
-xattr -cr direction_app1.app
+xattr -cr ds_fitness.app
 ```
 
 ---
@@ -406,9 +375,9 @@ para rodar em outra máquina Linux compatível).
   flutter pub get
   ```
 
-- **Build de release usa a API de produção automaticamente** (ver
-  [Configuração de Ambiente / API](#configuração-de-ambiente--api)) — não
-  esqueça de testar contra produção antes de distribuir, não só contra o
-  `localhost` do `flutter run` em debug.
-
-Se tiver mais atualizações do projeto, coloque aqui! 🚀
+- **Build de release precisa do endereço da API.** Sem
+  `--dart-define=API_BASE_URL=...`, o app aponta para o servidor de
+  desenvolvimento (`localhost:5270`, ou `10.0.2.2` no emulador Android) — ver
+  [Configuração de Ambiente / API](#configuração-de-ambiente--api). Confira
+  também a pasta `assets/`, que o build exige completa (ver
+  [Imagens dos Exercícios](#imagens-dos-exercícios)).

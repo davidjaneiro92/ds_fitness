@@ -9,4 +9,15 @@ abstract class LogServiceInterface {
   void warning(String message, {Object? error});
 
   void error(String message, {Object? error, StackTrace? stackTrace});
+
+  /// Falha de uma chamada a API (sem resposta ou status de erro). Vai para o
+  /// log remoto como erro de `requisicao`.
+  void requisicaoFalhou({
+    required String method,
+    required String path,
+    required String mensagem,
+    int? status,
+    int? duracaoMs,
+    String? detalhe,
+  });
 }

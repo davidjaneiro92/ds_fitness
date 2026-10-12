@@ -22,12 +22,12 @@ import '../core/features/perfil/view/perfil_view.dart';
 import '../core/features/splash/binding/splash_binding.dart';
 import '../core/features/splash/view/splash_view.dart';
 import '../core/features/treino_form/binding/exercicios_binding.dart';
-import '../core/features/treino_form/binding/grupos_binding.dart';
 import '../core/features/treino_form/binding/treino_form_binding.dart';
+import '../core/features/treino_form/view/exercicio_configurar_view.dart';
 import '../core/features/treino_form/view/exercicios_view.dart';
 import '../core/features/treino_form/view/grupos_view.dart';
-import '../core/features/treino_form/view/treino_editar_view.dart';
 import '../core/features/treino_form/view/treino_form_view.dart';
+import '../core/features/treino_form/view/treino_revisar_view.dart';
 import '../core/features/treinos/binding/treinos_binding.dart';
 import '../core/features/treinos/view/treinos_view.dart';
 import '../enum/pages_routes.dart';
@@ -78,8 +78,8 @@ abstract class AppPages {
       transitionDuration: _duration,
     ),
     GetPage<void>(
-      name: PagesRoutes.treinoEditar.path,
-      page: () => const TreinoEditarView(),
+      name: PagesRoutes.treinoRevisar.path,
+      page: () => const TreinoRevisarView(),
       binding: TreinoFormBinding(),
       transition: _transition,
       transitionDuration: _duration,
@@ -87,7 +87,6 @@ abstract class AppPages {
     GetPage<void>(
       name: PagesRoutes.grupos.path,
       page: () => const GruposView(),
-      binding: GruposBinding(),
       transition: _transition,
       transitionDuration: _duration,
     ),
@@ -95,6 +94,12 @@ abstract class AppPages {
       name: PagesRoutes.exercicios.path,
       page: () => const ExerciciosView(),
       binding: ExerciciosBinding(),
+      transition: _transition,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.exercicioConfigurar.path,
+      page: () => const ExercicioConfigurarView(),
       transition: _transition,
       transitionDuration: _duration,
     ),

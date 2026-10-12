@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../components/anatomy/muscle_body.dart';
+import '../../../../components/anatomy/grupo_muscular_imagem.dart';
 import '../../../../components/anatomy/muscle_chip.dart';
 import '../../../../components/buttons/app_button.dart';
 import '../../../../components/charts/app_line_chart.dart';
@@ -133,10 +133,9 @@ class _Cabecalho extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         ExerciseIllustration(
-          nome: exercicio.nome,
+          imagem: exercicio.imagem,
           grupo: exercicio.grupoPrimario,
           height: 220,
-          gifUrl: exercicio.gifUrl,
         ),
         const Gap(SpacingTokens.md),
         Text(exercicio.nome, style: TypographyTokens.screenTitle),
@@ -226,7 +225,7 @@ class _AbaExecucao extends StatelessWidget {
   }
 }
 
-/// Aba "Músculos": grupo primario, secundarios e boneco anatomico.
+/// Aba "Músculos": grupo primario, secundarios e a imagem do musculo.
 class _AbaMusculos extends StatelessWidget {
   const _AbaMusculos({required this.exercicio});
 
@@ -259,9 +258,9 @@ class _AbaMusculos extends StatelessWidget {
           ],
           const Gap(SpacingTokens.lg),
           Center(
-            child: MuscleBody(
-              destaque: exercicio.todosGrupos.toSet(),
-              size: 140,
+            child: GrupoMuscularImagem(
+              grupo: exercicio.grupoPrimario,
+              tamanho: 220,
             ),
           ),
         ],

@@ -29,6 +29,21 @@ abstract class TypographyTokens {
     color: ColorTokens.textPrimary,
   );
 
+  /// Titulo grande das telas do fluxo, logo abaixo da seta de voltar.
+  static const TextStyle pageTitle = TextStyle(
+    fontSize: 28,
+    fontWeight: FontWeight.w800,
+    color: ColorTokens.textPrimary,
+    height: 1.15,
+  );
+
+  /// Rotulo de campo de formulario, acima do campo.
+  static const TextStyle fieldLabel = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    color: ColorTokens.textPrimary,
+  );
+
   static const TextStyle cardTitle = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w700,

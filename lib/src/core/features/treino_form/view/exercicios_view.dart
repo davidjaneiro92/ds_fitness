@@ -1,77 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../components/cards/exercise_card.dart';
+import '../../../../components/buttons/app_button.dart';
+import '../../../../components/cards/exercicio_selecao_tile.dart';
 import '../../../../components/common/gap.dart';
+import '../../../../components/common/page_header.dart';
 import '../../../../components/empty_states/empty_state.dart';
 import '../../../../components/inputs/app_search_field.dart';
-import '../../../../components/modals/app_modal_sheet.dart';
 import '../../../../components/navbars/app_navbar.dart';
 import '../../../../components/scaffolds/app_scaffold.dart';
-import '../../../../core/theme/tokens/color_tokens.dart';
 import '../../../../core/theme/tokens/spacing_tokens.dart';
+import '../../../../enum/pages_routes.dart';
 import '../../../../models/exercicio.dart';
-import '../../../../models/treino_exercicio.dart';
 import '../abstracts/exercicios_controller_interface.dart';
 import '../abstracts/treino_form_controller_interface.dart';
-import 'widgets/add_exercicio_sheet.dart';
 
-/// Tela 8 — lista de exercicios de um grupo muscular (`/exercicios`).
+/// Passo 3 do fluxo — *Selecionar exercício* (`/exercicios`): os exercicios dos
+/// grupos escolhidos, com busca, e um deles marcado. *Configurar exercício* leva
+/// a tela de series, repeticoes e descanso.
 class ExerciciosView extends GetView<ExerciciosControllerInterface> {
   const ExerciciosView({super.key});
 
-  Future<void> _abrirSheet(Exercicio exercicio) async {
-    final TreinoFormControllerInterface treinoForm = Get.find();
-    TreinoExercicio? existente;
-    for (final TreinoExercicio item in treinoForm.exercicios) {
-      if (item.exercicioId == exercicio.id) {
-        existente = item;
-        break;
-      }
-    }
-    await showAppModalSheet<void>(
-      title: exercicio.nome,
-      child: AddExercicioSheet(exercicio: exercicio, existente: existente),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final TreinoFormControllerInterface treinoForm = Get.find();
+
     return AppScaffold(
-      navbar: AppNavbar(title: controller.grupo.label),
+      navbar: const AppNavbar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          const PageHeader(title: 'Selecionar exercício'),
           AppSearchField(onChanged: controller.buscar),
           const Gap(SpacingTokens.md),
           Expanded(
             child: Obx(() {
               if (controller.carregando.value) {
-                return const Center(
-                  child: CircularProgressIndicator(color: ColorTokens.accent),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
               final List<Exercicio> lista = controller.filtrados;
               if (lista.isEmpty) {
                 return const EmptyState(
                   icon: Icons.search_off_rounded,
                   title: 'Nenhum exercício encontrado',
-                  message: 'Tente pesquisar por outro nome.',
+                  message: 'Tente pesquisar por outro nome ou escolha outros grupos.',
                 );
               }
               final Set<String> adicionados = controller.adicionadosIds;
+              final String? escolhido = treinoForm.exercicioEscolhido.value?.id;
               return ListView.builder(
                 itemCount: lista.length,
                 itemBuilder: (BuildContext context, int index) {
                   final Exercicio exercicio = lista[index];
-                  final bool jaAdicionado = adicionados.contains(exercicio.id);
-                  return ExerciseCard(
+                  return ExercicioSelecaoTile(
                     exercicio: exercicio,
-                    onTap: () => _abrirSheet(exercicio),
-                    trailing: _BotaoAdicionar(
-                      adicionado: jaAdicionado,
-                      onTap: () => _abrirSheet(exercicio),
-                    ),
+                    selecionado: exercicio.id == escolhido,
+                    jaAdicionado: adicionados.contains(exercicio.id),
+                    onTap: () => treinoForm.escolherExercicio(exercicio),
                   );
                 },
               );
@@ -79,35 +64,12 @@ class ExerciciosView extends GetView<ExerciciosControllerInterface> {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// Botao circular do trailing do [ExerciseCard]: `+` quando ainda nao
-/// adicionado ao treino, `check` (verde sobre `accentSoft`) quando ja esta.
-class _BotaoAdicionar extends StatelessWidget {
-  const _BotaoAdicionar({required this.adicionado, required this.onTap});
-
-  final bool adicionado;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(SpacingTokens.radiusPill),
-      child: Container(
-        width: 32,
-        height: 32,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: adicionado ? ColorTokens.accentSoft : ColorTokens.accent,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          adicionado ? Icons.check_rounded : Icons.add_rounded,
-          size: 18,
-          color: adicionado ? ColorTokens.accent : ColorTokens.textOnAccent,
+      footer: Obx(
+        () => AppButton(
+          label: 'Configurar exercício',
+          onPressed: treinoForm.exercicioEscolhido.value == null
+              ? null
+              : () => Get.toNamed<void>(PagesRoutes.exercicioConfigurar.path),
         ),
       ),
     );

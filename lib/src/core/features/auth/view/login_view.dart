@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../components/buttons/app_button.dart';
+import '../../../../components/buttons/app_social_button.dart';
 import '../../../../components/common/gap.dart';
 import '../../../../components/feedback/app_snackbar.dart';
 import '../../../../components/inputs/app_text_field.dart';
@@ -14,7 +15,10 @@ import '../../../utils/validators.dart';
 import '../abstracts/auth_controller_interface.dart';
 import 'widgets/ds_logo.dart';
 
-/// Tela de login (planejamento §3.2). Sem navbar, formulario reativo.
+/// Tela de login: marca com o lema, e-mail e senha, *Entrar*, e os botoes de
+/// entrar por Google, Apple e Facebook — que por enquanto so avisam que vem em
+/// breve. Sem navbar. O botao *Entrar* fica sempre ativo: os campos sao
+/// validados ao tocar nele, e os erros aparecem sob cada campo.
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -27,19 +31,12 @@ class _LoginViewState extends State<LoginView> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
-  final RxBool _formValido = false.obs;
 
   @override
   void dispose() {
     _emailController.dispose();
     _senhaController.dispose();
     super.dispose();
-  }
-
-  void _validar() {
-    final bool valido = Validators.email(_emailController.text) == null &&
-        Validators.senha(_senhaController.text) == null;
-    _formValido.value = valido;
   }
 
   Future<void> _entrar() async {
@@ -61,44 +58,22 @@ class _LoginViewState extends State<LoginView> {
           child: Column(
             children: <Widget>[
               const Gap(SpacingTokens.xxl),
-              const DsLogo(size: 72),
-              const Gap(SpacingTokens.xl),
-              const Text('Bem-vindo!', style: TypographyTokens.screenTitle),
-              const Gap(SpacingTokens.xs),
-              const Text(
-                'Faça login para continuar',
-                style: TypographyTokens.bodyMuted,
-              ),
-              const Gap(SpacingTokens.xl),
+              const DsLogo(size: 52, mostrarLema: true),
+              const Gap(SpacingTokens.xxl),
               AppTextField(
-                label: 'E-mail',
                 controller: _emailController,
-                hint: 'seu@email.com',
+                hint: 'E-mail',
                 prefixIcon: Icons.mail_outline_rounded,
                 keyboardType: TextInputType.emailAddress,
                 validator: Validators.email,
-                onChanged: (_) => _validar(),
               ),
               const Gap(SpacingTokens.md),
               AppTextField(
-                label: 'Senha',
                 controller: _senhaController,
+                hint: 'Senha',
+                prefixIcon: Icons.lock_outline_rounded,
                 isPassword: true,
                 validator: Validators.senha,
-                onChanged: (_) => _validar(),
-              ),
-              const Gap(SpacingTokens.sm),
-              Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: () => AppSnackbar.info('Em breve'),
-                  child: Text(
-                    'Esqueci minha senha',
-                    style: TypographyTokens.label.copyWith(
-                      color: ColorTokens.accent,
-                    ),
-                  ),
-                ),
               ),
               const Gap(SpacingTokens.lg),
               Obx(
@@ -106,48 +81,62 @@ class _LoginViewState extends State<LoginView> {
                   label: 'Entrar',
                   loading: _controller.carregando.value,
                   onPressed:
-                      (_formValido.value && !_controller.carregando.value)
-                          ? () => _entrar()
-                          : null,
+                      _controller.carregando.value ? null : () => _entrar(),
                 ),
               ),
-              const Gap(SpacingTokens.lg),
-              const Row(
-                children: <Widget>[
-                  Expanded(child: Divider(color: ColorTokens.divider)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: SpacingTokens.sm,
+              const Gap(SpacingTokens.sm + 4),
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () => AppSnackbar.info('Em breve'),
+                  child: Text(
+                    'Esqueceu sua senha?',
+                    style: TypographyTokens.label.copyWith(
+                      color: ColorTokens.textPrimary,
+                      decoration: TextDecoration.underline,
+                      decorationColor: ColorTokens.textPrimary,
                     ),
-                    child: Text('ou', style: TypographyTokens.bodyMuted),
                   ),
-                  Expanded(child: Divider(color: ColorTokens.divider)),
+                ),
+              ),
+              const Gap(SpacingTokens.xl),
+              const Text('Ou entre com', style: TypographyTokens.bodyMuted),
+              const Gap(SpacingTokens.md),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  AppSocialButton(
+                    icon: Icons.g_mobiledata_rounded,
+                    semanticsLabel: 'Entrar com o Google',
+                    onTap: () => _controller.loginComGoogle(),
+                  ),
+                  const Gap.horizontal(SpacingTokens.md),
+                  AppSocialButton(
+                    icon: Icons.apple,
+                    semanticsLabel: 'Entrar com a Apple',
+                    onTap: () => _controller.loginComApple(),
+                  ),
+                  const Gap.horizontal(SpacingTokens.md),
+                  AppSocialButton(
+                    icon: Icons.facebook,
+                    iconColor: ColorTokens.info,
+                    semanticsLabel: 'Entrar com o Facebook',
+                    onTap: () => _controller.loginComFacebook(),
+                  ),
                 ],
               ),
-              const Gap(SpacingTokens.lg),
-              Obx(
-                () => AppButton(
-                  label: 'Entrar com Google',
-                  variant: AppButtonVariant.surface,
-                  icon: Icons.g_mobiledata_rounded,
-                  loading: _controller.carregando.value,
-                  onPressed: _controller.carregando.value
-                      ? null
-                      : () => _controller.loginComGoogle(),
-                ),
-              ),
-              const Gap(SpacingTokens.xxl),
+              const Gap(SpacingTokens.xl),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   const Text(
-                    'Ainda não tem conta? ',
+                    'Ainda não tem uma conta? ',
                     style: TypographyTokens.bodyMuted,
                   ),
                   GestureDetector(
                     onTap: () => Get.toNamed<void>(PagesRoutes.cadastro.path),
                     child: Text(
-                      'Criar conta',
+                      'Cadastre-se',
                       style: TypographyTokens.bodyStrong.copyWith(
                         color: ColorTokens.accent,
                       ),

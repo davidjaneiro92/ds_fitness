@@ -121,6 +121,16 @@ class AuthController extends GetxController implements AuthControllerInterface {
   }
 
   @override
+  Future<void> loginComApple() async {
+    AppSnackbar.info('Entrar com a Apple estará disponível em breve');
+  }
+
+  @override
+  Future<void> loginComFacebook() async {
+    AppSnackbar.info('Entrar com o Facebook estará disponível em breve');
+  }
+
+  @override
   Future<void> sair() async {
     await _repository.encerrarSessao();
     await _limparSessaoLocal();

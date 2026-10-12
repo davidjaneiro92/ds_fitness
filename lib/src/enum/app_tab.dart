@@ -1,10 +1,11 @@
 import 'pages_routes.dart';
 
-/// Abas da navegacao inferior (planejamento §1 — `AppBottomNav`).
+/// Abas da navegacao inferior (`AppBottomNav`): Inicio, Treinos, Evolucao e
+/// Perfil.
 enum AppTab {
-  home('Home', PagesRoutes.home),
+  home('Início', PagesRoutes.home),
   treinos('Treinos', PagesRoutes.treinos),
-  exercicios('Exercícios', PagesRoutes.biblioteca),
+  evolucao('Evolução', PagesRoutes.estatisticas),
   perfil('Perfil', PagesRoutes.perfil);
 
   const AppTab(this.label, this.route);

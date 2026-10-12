@@ -14,6 +14,9 @@ abstract class Endpoints {
   static const String logoff = '$_prefixo/autenticacao/login/logoff';
   static const String autoCadastro = '$_prefixo/autenticacao/auto-cadastro';
 
+  // ── Log ────────────────────────────────────────────────────────────────
+  static const String logErros = '$_prefixo/log/erros';
+
   // ── Cadastro ───────────────────────────────────────────────────────────
   static const String exercicios = '$_prefixo/cadastro/exercicios';
   static const String perfil = '$_prefixo/cadastro/perfil';

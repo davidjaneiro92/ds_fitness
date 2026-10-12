@@ -9,8 +9,8 @@ class TreinoExercicio {
     required this.ordem,
     this.series = 4,
     this.repeticoes = 12,
-    this.cargaInicial = 20,
-    this.descansoSeg = 60,
+    this.cargaInicial = 0,
+    this.descansoSeg = 90,
     this.observacao = '',
   });
 
@@ -39,9 +39,11 @@ class TreinoExercicio {
 
   String get exercicioId => exercicio.id;
 
-  /// Ex.: "4x 12 reps · 30 kg".
+  /// Ex.: "4 séries • 12 reps • 90 s" — o que se configura no treino. A carga
+  /// nao entra: ela se define na execucao.
   String get resumo =>
-      '${series}x $repeticoes reps · ${_formatCarga(cargaInicial)} kg';
+      '$series ${series == 1 ? 'série' : 'séries'} • $repeticoes reps • '
+      '$descansoSeg s';
 
   /// Volume planejado: carga x reps x series.
   double get volumePlanejado => cargaInicial * repeticoes * series;
@@ -77,10 +79,4 @@ class TreinoExercicio {
         'descansoSeg': descansoSeg,
         'observacao': observacao,
       };
-
-  static String _formatCarga(double valor) {
-    return valor == valor.roundToDouble()
-        ? valor.toStringAsFixed(0)
-        : valor.toStringAsFixed(1).replaceAll('.', ',');
-  }
 }

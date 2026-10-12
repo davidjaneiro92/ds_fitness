@@ -54,6 +54,7 @@ class _AppSearchFieldState extends State<AppSearchField> {
   Widget build(BuildContext context) {
     return Container(
       height: SpacingTokens.inputHeight,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: ColorTokens.bgSurfaceAlt,
         borderRadius: BorderRadius.circular(SpacingTokens.radiusButton),
@@ -63,6 +64,7 @@ class _AppSearchFieldState extends State<AppSearchField> {
         onChanged: widget.onChanged,
         style: TypographyTokens.body,
         cursorColor: ColorTokens.accent,
+        textAlignVertical: TextAlignVertical.center,
         decoration: InputDecoration(
           hintText: widget.hint,
           hintStyle: TypographyTokens.body.copyWith(

@@ -25,15 +25,14 @@ class BibliotecaView extends GetView<BibliotecaControllerInterface> {
   Widget build(BuildContext context) {
     return AppScaffold(
       navbar: AppNavbar(
-        title: 'Exercícios',
-        showBack: false,
+        title: 'Biblioteca de exercícios',
         action: NavbarAction(
           icon: Icons.add_rounded,
           onTap: () => controller.novoExercicio(),
           color: ColorTokens.accent,
         ),
       ),
-      bottomNav: const AppBottomNav(current: AppTab.exercicios),
+      bottomNav: const AppBottomNav(current: AppTab.perfil),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[

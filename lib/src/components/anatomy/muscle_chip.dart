@@ -4,10 +4,10 @@ import '../../core/theme/tokens/color_tokens.dart';
 import '../../core/theme/tokens/spacing_tokens.dart';
 import '../../core/theme/tokens/typography_tokens.dart';
 import '../../enum/grupo_muscular.dart';
-import 'muscle_body.dart';
+import 'grupo_muscular_imagem.dart';
 
-/// Boneco de [MuscleBody] com o nome do grupo embaixo, usado em listas e
-/// no detalhe do exercicio (telas 9, 11 e 19).
+/// Imagem do grupo muscular com o nome embaixo, usada no detalhe e na
+/// execucao do exercicio.
 class MuscleChip extends StatelessWidget {
   const MuscleChip({
     required this.grupo,
@@ -31,7 +31,7 @@ class MuscleChip extends StatelessWidget {
               color: ColorTokens.bgSurfaceAlt,
               borderRadius: BorderRadius.circular(SpacingTokens.radiusButton),
             ),
-            child: MuscleBody(destaque: <GrupoMuscular>{grupo}, size: size),
+            child: GrupoMuscularImagem(grupo: grupo, tamanho: size),
           ),
           const SizedBox(height: SpacingTokens.xs),
           Text(
@@ -60,7 +60,7 @@ class MuscleChipsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: size * 1.6 + SpacingTokens.xl + SpacingTokens.xs,
+      height: size + SpacingTokens.xl + SpacingTokens.md,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: grupos.length,

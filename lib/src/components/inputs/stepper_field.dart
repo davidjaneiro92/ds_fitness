@@ -5,7 +5,8 @@ import '../../core/theme/tokens/spacing_tokens.dart';
 import '../../core/theme/tokens/typography_tokens.dart';
 
 /// Linha label + controle `[-] valor [+]`, usada para series, repeticoes,
-/// carga e descanso.
+/// carga e descanso. Com [icon], o rotulo vem precedido do icone e em destaque
+/// (como na tela de configurar exercicio).
 class StepperField extends StatelessWidget {
   const StepperField({
     required this.label,
@@ -17,6 +18,7 @@ class StepperField extends StatelessWidget {
     this.max = 999,
     this.suffix,
     this.dense = false,
+    this.icon,
   });
 
   final String label;
@@ -27,6 +29,7 @@ class StepperField extends StatelessWidget {
   final num max;
   final String? suffix;
   final bool dense;
+  final IconData? icon;
 
   String get _valorFormatado {
     final bool isInteiro = value == value.roundToDouble();
@@ -53,7 +56,16 @@ class StepperField extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(label, style: TypographyTokens.label),
+        if (icon != null) ...<Widget>[
+          Icon(icon, size: 20, color: ColorTokens.textSecondary),
+          const SizedBox(width: SpacingTokens.sm + 4),
+        ],
+        Expanded(
+          child: Text(
+            label,
+            style: icon == null ? TypographyTokens.label : TypographyTokens.body,
+          ),
+        ),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

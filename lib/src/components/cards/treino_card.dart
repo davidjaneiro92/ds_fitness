@@ -4,9 +4,11 @@ import '../../core/theme/tokens/color_tokens.dart';
 import '../../core/theme/tokens/spacing_tokens.dart';
 import '../../core/theme/tokens/typography_tokens.dart';
 import '../../models/treino.dart';
+import '../chips/app_chip.dart';
 import 'app_card.dart';
 
-/// Card de treino: icone, nome, grupos e resumo de exercicios.
+/// Card de treino: icone, nome, grupos, resumo de exercicios e o dia da
+/// semana (quando o treino tem um).
 class TreinoCard extends StatelessWidget {
   const TreinoCard({
     required this.treino,
@@ -72,6 +74,10 @@ class TreinoCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: SpacingTokens.sm),
+          if (treino.dia != null) ...<Widget>[
+            AppChip(label: treino.dia!.abreviacao, dense: true),
+            const SizedBox(width: SpacingTokens.xs),
+          ],
           trailing ??
               const Icon(
                 Icons.chevron_right_rounded,

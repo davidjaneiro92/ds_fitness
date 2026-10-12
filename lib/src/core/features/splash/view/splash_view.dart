@@ -57,7 +57,7 @@ class _SplashViewState extends State<SplashView>
             child: const Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                DsLogo(size: 96),
+                DsLogo(size: 56),
                 Gap(SpacingTokens.lg),
                 Text.rich(
                   TextSpan(

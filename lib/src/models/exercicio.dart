@@ -14,8 +14,7 @@ class Exercicio {
     this.equipamento = '',
     this.favorito = false,
     this.personalizado = false,
-    this.gifUrl = '',
-    this.miniaturaUrl = '',
+    this.imagem = '',
   });
 
   factory Exercicio.fromJson(Map<String, dynamic> json) {
@@ -33,8 +32,7 @@ class Exercicio {
       equipamento: json['equipamento'] as String? ?? '',
       favorito: json['favorito'] as bool? ?? false,
       personalizado: json['personalizado'] as bool? ?? false,
-      gifUrl: json['gifUrl'] as String? ?? '',
-      miniaturaUrl: json['miniaturaUrl'] as String? ?? '',
+      imagem: json['imagem'] as String? ?? '',
     );
   }
 
@@ -50,12 +48,11 @@ class Exercicio {
   /// ou excluir. Os do catalogo do sistema sao somente leitura.
   final bool personalizado;
 
-  /// Link do GIF que mostra o movimento. Vazio quando o exercicio nao tem
-  /// imagem (os que o usuario cria): a tela mostra a ilustracao generica.
-  final String gifUrl;
-
-  /// Link da versao pequena do GIF, para as listas. Vazio quando nao ha.
-  final String miniaturaUrl;
+  /// Chave da imagem do exercicio (`pasta/arquivo`, sem extensao), a partir da
+  /// qual o app monta o caminho do GIF e o da miniatura (`AppAssets`). Vazia
+  /// quando o exercicio nao tem imagem (os que o usuario cria): a tela mostra
+  /// a ilustracao generica.
+  final String imagem;
 
   /// Grupo primario seguido dos secundarios, sem repeticao.
   List<GrupoMuscular> get todosGrupos => <GrupoMuscular>[
@@ -63,8 +60,8 @@ class Exercicio {
         ...gruposSecundarios.where((g) => g != grupoPrimario),
       ];
 
-  /// Ex.: "Peito, Tríceps, Ombro" — usado como subtitulo dos cards.
-  String get gruposLabel => todosGrupos.map((g) => g.label).join(', ');
+  /// Ex.: "Peito • Tríceps • Ombros" — usado como subtitulo dos cards.
+  String get gruposLabel => todosGrupos.map((g) => g.label).join(' • ');
 
   Exercicio copyWith({
     String? nome,
@@ -74,8 +71,7 @@ class Exercicio {
     String? equipamento,
     bool? favorito,
     bool? personalizado,
-    String? gifUrl,
-    String? miniaturaUrl,
+    String? imagem,
   }) {
     return Exercicio(
       id: id,
@@ -86,8 +82,7 @@ class Exercicio {
       equipamento: equipamento ?? this.equipamento,
       favorito: favorito ?? this.favorito,
       personalizado: personalizado ?? this.personalizado,
-      gifUrl: gifUrl ?? this.gifUrl,
-      miniaturaUrl: miniaturaUrl ?? this.miniaturaUrl,
+      imagem: imagem ?? this.imagem,
     );
   }
 
@@ -101,8 +96,7 @@ class Exercicio {
         'equipamento': equipamento,
         'favorito': favorito,
         'personalizado': personalizado,
-        'gifUrl': gifUrl,
-        'miniaturaUrl': miniaturaUrl,
+        'imagem': imagem,
       };
 
   /// Igualdade por valor: o `Rx` so notifica quando o valor muda, e editar o
@@ -118,8 +112,7 @@ class Exercicio {
       other.equipamento == equipamento &&
       other.favorito == favorito &&
       other.personalizado == personalizado &&
-      other.gifUrl == gifUrl &&
-      other.miniaturaUrl == miniaturaUrl;
+      other.imagem == imagem;
 
   @override
   int get hashCode => Object.hash(
@@ -131,7 +124,6 @@ class Exercicio {
         equipamento,
         favorito,
         personalizado,
-        gifUrl,
-        miniaturaUrl,
+        imagem,
       );
 }

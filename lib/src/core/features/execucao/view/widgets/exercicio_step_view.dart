@@ -241,10 +241,9 @@ class ExercicioStepView extends StatelessWidget {
                 ),
                 const Gap(SpacingTokens.lg),
                 ExerciseIllustration(
-                  nome: exercicio.nome,
+                  imagem: exercicio.imagem,
                   grupo: exercicio.grupoPrimario,
-                  height: 200,
-                  gifUrl: exercicio.gifUrl,
+                  height: 220,
                 ),
                 const Gap(SpacingTokens.md),
                 MuscleChipsRow(grupos: exercicio.todosGrupos),

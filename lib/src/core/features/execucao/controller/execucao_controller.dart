@@ -126,6 +126,7 @@ class ExecucaoController extends GetxController
               MapEntry<String, double>(te.exercicioId, te.cargaInicial),
         ),
       );
+      await _usarUltimasCargas(carregado);
       indiceExercicio.value = 0;
       serieAtual.value = 1;
       _retomarSnapshot(carregado);
@@ -135,6 +136,29 @@ class ExecucaoController extends GetxController
       _log.error('Falha ao carregar treino para execucao', error: erro, stackTrace: stackTrace);
       AppSnackbar.erro(ErrorMessages.de(erro));
     }
+  }
+
+  /// O treino montado no app nao guarda carga (ela se define na execucao): cada
+  /// exercicio sem carga comeca na ultima que o usuario usou nele, e nao em
+  /// zero. Nao conseguir buscar so deixa o exercicio em zero, como num exercicio
+  /// que nunca foi feito.
+  Future<void> _usarUltimasCargas(Treino carregado) async {
+    final List<TreinoExercicio> semCarga = carregado.exercicios
+        .where((TreinoExercicio te) => te.cargaInicial <= 0)
+        .toList();
+    await Future.wait(
+      semCarga.map((TreinoExercicio item) async {
+        try {
+          final List<RegistroCarga> registros =
+              await _repository.registrosDeCarga(item.exercicioId);
+          if (registros.isNotEmpty && registros.last.carga > 0) {
+            _cargas[item.exercicioId] = registros.last.carga;
+          }
+        } catch (erro) {
+          _log.warning('Nao foi possivel buscar a ultima carga', error: erro);
+        }
+      }),
+    );
   }
 
   @override

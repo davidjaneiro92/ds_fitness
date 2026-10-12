@@ -1,24 +1,24 @@
 import 'package:get/get.dart';
 
-import '../../../../enum/grupo_muscular.dart';
 import '../../../../models/exercicio.dart';
 
-/// Contrato do controller da tela 8 (lista de exercicios de um grupo).
+/// Contrato do controller da escolha de exercicio: os exercicios dos grupos
+/// musculares selecionados, com busca por nome.
 abstract class ExerciciosControllerInterface {
-  /// Grupo muscular selecionado na tela anterior (`ExerciciosArgs`).
-  GrupoMuscular get grupo;
-
   RxList<Exercicio> get exercicios;
 
   RxString get busca;
 
   RxBool get carregando;
 
-  /// Catalogo do grupo atual filtrado pelo texto de [busca].
+  /// Os exercicios cujo grupo primario esta entre os selecionados, filtrados
+  /// pelo texto de [busca] (sem diferenciar caixa nem acento).
   List<Exercicio> get filtrados;
 
-  /// Ids dos exercicios ja adicionados ao treino em edicao.
+  /// Ids dos exercicios que ja estao no treino.
   Set<String> get adicionadosIds;
+
+  Future<void> carregar();
 
   void buscar(String texto);
 }

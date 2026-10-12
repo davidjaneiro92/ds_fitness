@@ -17,6 +17,9 @@ abstract class StorageKeys {
   /// Instante (ISO 8601, UTC) em que o access token vence.
   static const String tokenExpiraEm = 'auth_token_expira_em';
   static const String usuario = 'usuario';
+
+  /// Erros que ainda nao chegaram ao log da API (JSON).
+  static const String logsPendentes = 'logs_pendentes';
   static const String sessaoEmAndamento = 'sessao_em_andamento';
   static const String somDescanso = 'pref_som_descanso';
   static const String vibrarDescanso = 'pref_vibrar_descanso';

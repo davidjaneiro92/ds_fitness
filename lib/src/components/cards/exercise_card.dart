@@ -34,10 +34,10 @@ class ExerciseCard extends StatelessWidget {
         children: <Widget>[
           if (showThumb) ...<Widget>[
             ExerciseIllustration(
-              nome: exercicio.nome,
+              imagem: exercicio.imagem,
               grupo: exercicio.grupoPrimario,
               compact: true,
-              miniaturaUrl: exercicio.miniaturaUrl,
+              tamanho: 56,
             ),
             const SizedBox(width: SpacingTokens.sm + 4),
           ],

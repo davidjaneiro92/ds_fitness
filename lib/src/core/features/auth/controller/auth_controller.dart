@@ -116,6 +116,48 @@ class AuthController extends GetxController implements AuthControllerInterface {
   }
 
   @override
+  Future<bool> solicitarRecuperacaoSenha({required String email}) async {
+    carregando.value = true;
+    try {
+      await _repository.solicitarRecuperacaoSenha(email: email);
+      return true;
+    } on ApiException catch (erro) {
+      _log.warning('Falha ao solicitar recuperacao de senha', error: erro);
+      AppSnackbar.erro(erro.mensagem);
+      return false;
+    } catch (erro, pilha) {
+      _log.error('Falha ao solicitar recuperacao de senha', error: erro, stackTrace: pilha);
+      AppSnackbar.erro('Não foi possível solicitar a recuperação. Tente novamente.');
+      return false;
+    } finally {
+      carregando.value = false;
+    }
+  }
+
+  @override
+  Future<bool> redefinirSenha({
+    required String email,
+    required String codigo,
+    required String novaSenha,
+  }) async {
+    carregando.value = true;
+    try {
+      await _repository.redefinirSenha(email: email, codigo: codigo, novaSenha: novaSenha);
+      return true;
+    } on ApiException catch (erro) {
+      _log.warning('Falha ao redefinir senha', error: erro);
+      AppSnackbar.erro(erro.mensagem);
+      return false;
+    } catch (erro, pilha) {
+      _log.error('Falha ao redefinir senha', error: erro, stackTrace: pilha);
+      AppSnackbar.erro('Não foi possível redefinir sua senha. Tente novamente.');
+      return false;
+    } finally {
+      carregando.value = false;
+    }
+  }
+
+  @override
   Future<void> loginComGoogle() async {
     AppSnackbar.info('Entrar com o Google estará disponível em breve');
   }

@@ -54,6 +54,30 @@ class AuthRepository implements AuthRepositoryInterface {
   }
 
   @override
+  Future<void> solicitarRecuperacaoSenha({required String email}) async {
+    await _http.restRequest(
+      path: Endpoints.solicitarRecuperacaoSenha,
+      method: HttpMethod.post,
+      body: <String, dynamic>{'login': email},
+      autenticado: false,
+    );
+  }
+
+  @override
+  Future<void> redefinirSenha({
+    required String email,
+    required String codigo,
+    required String novaSenha,
+  }) async {
+    await _http.restRequest(
+      path: Endpoints.redefinirSenha,
+      method: HttpMethod.post,
+      body: <String, dynamic>{'login': email, 'codigo': codigo, 'novaSenha': novaSenha},
+      autenticado: false,
+    );
+  }
+
+  @override
   Future<void> encerrarSessao() async {
     final String? refreshToken = _http.refreshToken;
     try {

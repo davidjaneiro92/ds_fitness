@@ -4,6 +4,7 @@
 enum PagesRoutes {
   splash('/splash'),
   login('/login'),
+  esqueciSenha('/esqueci-senha'),
   cadastro('/cadastro'),
   home('/home'),
   treinos('/treinos'),

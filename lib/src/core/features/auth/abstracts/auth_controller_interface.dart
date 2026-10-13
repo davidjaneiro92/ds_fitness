@@ -21,6 +21,14 @@ abstract class AuthControllerInterface {
     required String sexo,
   });
 
+  Future<bool> solicitarRecuperacaoSenha({required String email});
+
+  Future<bool> redefinirSenha({
+    required String email,
+    required String codigo,
+    required String novaSenha,
+  });
+
   /// Entrar por uma conta externa: ainda nao ha suporte na API. Os botoes
   /// existem na tela de login, e tocar neles avisa que vem em breve.
   Future<void> loginComGoogle();

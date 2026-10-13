@@ -13,6 +13,10 @@ abstract class Endpoints {
       '$_prefixo/autenticacao/login/refresh-token';
   static const String logoff = '$_prefixo/autenticacao/login/logoff';
   static const String autoCadastro = '$_prefixo/autenticacao/auto-cadastro';
+  static const String solicitarRecuperacaoSenha =
+      '$_prefixo/autenticacao/recuperar-senha/solicitar';
+  static const String redefinirSenha =
+      '$_prefixo/autenticacao/recuperar-senha/redefinir';
 
   // ── Log ────────────────────────────────────────────────────────────────
   static const String logErros = '$_prefixo/log/erros';

@@ -30,7 +30,7 @@ class _CadastroViewState extends State<CadastroView> {
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _dataController = TextEditingController();
   final Rx<String?> _sexo = Rx<String?>(null);
-  final RxBool _formValido = false.obs;
+  final RxBool _formPreenchido = false.obs;
 
   @override
   void dispose() {
@@ -42,13 +42,12 @@ class _CadastroViewState extends State<CadastroView> {
   }
 
   void _validar() {
-    final bool valido =
-        Validators.nomeCompleto(_nomeController.text) == null &&
-            Validators.email(_emailController.text) == null &&
-            Validators.senhaNova(_senhaController.text) == null &&
-            Validators.dataNascimento(_dataController.text) == null &&
+    _formPreenchido.value =
+        _nomeController.text.trim().isNotEmpty &&
+            _emailController.text.trim().isNotEmpty &&
+            _senhaController.text.isNotEmpty &&
+            _dataController.text.trim().isNotEmpty &&
             _sexo.value != null;
-    _formValido.value = valido;
   }
 
   void _selecionarSexo(String valor) {
@@ -179,7 +178,7 @@ class _CadastroViewState extends State<CadastroView> {
                   label: 'Criar conta',
                   loading: _controller.carregando.value,
                   onPressed:
-                      (_formValido.value && !_controller.carregando.value)
+                      (_formPreenchido.value && !_controller.carregando.value)
                           ? () => _criarConta()
                           : null,
                 ),

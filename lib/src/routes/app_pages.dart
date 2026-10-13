@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../core/features/auth/view/cadastro_view.dart';
+import '../core/features/auth/view/esqueci_senha_view.dart';
 import '../core/features/auth/view/login_view.dart';
 import '../core/features/biblioteca/binding/biblioteca_binding.dart';
 import '../core/features/biblioteca/view/biblioteca_view.dart';
@@ -53,6 +54,12 @@ abstract class AppPages {
     GetPage<void>(
       name: PagesRoutes.cadastro.path,
       page: () => const CadastroView(),
+      transition: _transition,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.esqueciSenha.path,
+      page: () => const EsqueciSenhaView(),
       transition: _transition,
       transitionDuration: _duration,
     ),

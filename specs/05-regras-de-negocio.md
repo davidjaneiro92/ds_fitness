@@ -15,11 +15,11 @@ Regras efetivamente implementadas no código hoje. Sempre que uma nova regra for
 
 E-mail e senha (com mostrar/ocultar). O botão *Entrar* fica **sempre ativo**: ao tocar, os campos são validados e o erro aparece sob cada um (*"Informe seu e-mail"*, *"Informe sua senha"*, e-mail com formato inválido, senha com menos de 6 caracteres; o tamanho **real** da senha quem decide é o servidor). Credencial errada mostra *"E-mail ou senha inválidos"*. Sucesso grava a sessão e abre a Início com `offAllNamed`.
 
-*Esqueceu sua senha?* avisa *"Em breve"* (não há endpoint). Os botões **Google, Apple e Facebook** estão na tela e, por decisão de produto, **não têm função por enquanto**: cada um avisa *"Entrar com o … estará disponível em breve"*. *Cadastre-se* abre o cadastro.
+*Esqueceu sua senha?* solicita um código de seis dígitos por e-mail, depois permite informar o código e uma nova senha (mínimo de 8 caracteres). O código vence em 10 minutos e após cinco tentativas incorretas precisa ser solicitado novamente. É possível voltar para trocar o e-mail ou solicitar outro código. No sucesso, a senha é atualizada e as sessões refresh são revogadas; o usuário retorna ao login. O servidor responde sem confirmar se o e-mail existe. O envio requer SMTP Gmail configurado no backend. Os botões **Google, Apple e Facebook** estão na tela e, por decisão de produto, **não têm função por enquanto**: cada um avisa *"Entrar com o … estará disponível em breve"*. *Cadastre-se* abre o cadastro.
 
 ### Cadastro (`/cadastro`)
 
-Nome completo (nome e sobrenome), e-mail, senha (mínimo **8** caracteres, a regra do servidor, com a dica sob o campo), data de nascimento (`dd/mm/aaaa` com seletor; idade mínima de 16 anos) e sexo (chips Masculino e Feminino). O botão só habilita com tudo válido. Por baixo:
+Nome completo (nome e sobrenome), e-mail, senha (mínimo **8** caracteres, a regra do servidor, com a dica sob o campo), data de nascimento (`dd/mm/aaaa` com seletor; idade mínima de 16 anos) e sexo (chips Masculino e Feminino). O botão habilita quando todos os campos estão preenchidos; ao tocar, valida os formatos e mostra os erros nos campos. Por baixo:
 
 1. cria a conta (`auto-cadastro`, só com e-mail e senha);
 2. entra (`login`);

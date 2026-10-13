@@ -11,6 +11,10 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/icon/icon.png"
+  windows:
+    generate: true
+    image_path: "assets/icon/icon.png"
+    icon_size: 256
 
 dependencies:
   flutter:
@@ -34,6 +38,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -42,6 +47,8 @@ flutter:
   # da API (Exercicio.imagem = pasta/arquivo): o GIF e a miniatura de cada um. Para
   # incluir outro exercicio, acrescente os dois arquivos abaixo (specs/07-engenharia.md).
   assets:
+    - assets/icon/icon.png
+    - assets/img/backgrounds/login-gym-background.png
     # Imagens dos grupos musculares, usadas como icone
     - assets/img/muscles/
     # GIFs dos exercicios do catalogo (um por exercicio; ver docs)

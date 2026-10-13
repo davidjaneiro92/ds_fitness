@@ -9,6 +9,13 @@ import '../enum/grupo_muscular.dart';
 abstract class AppAssets {
   static const String _base = 'assets/img';
 
+  /// Logo da marca, incluido no bundle do app para uso em widgets.
+  static const String logo = 'assets/icon/icon.png';
+
+  /// Fundo escuro com anilhas da tela de login.
+  static const String loginBackground =
+      '$_base/backgrounds/login-gym-background.png';
+
   /// GIF animado do movimento (telas de configuracao, execucao e detalhe).
   static String gifDoExercicio(String chave) => '$_base/gifs/$chave.gif';
 

@@ -18,6 +18,14 @@ abstract class AuthRepositoryInterface {
     required String sexo,
   });
 
+  Future<void> solicitarRecuperacaoSenha({required String email});
+
+  Future<void> redefinirSenha({
+    required String email,
+    required String codigo,
+    required String novaSenha,
+  });
+
   /// Revoga o refresh token no servidor e apaga a sessao local. A falha de
   /// rede nao impede o usuario de sair: a sessao local sempre e apagada.
   Future<void> encerrarSessao();

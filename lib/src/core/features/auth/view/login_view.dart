@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import '../../../../components/buttons/app_button.dart';
 import '../../../../components/buttons/app_social_button.dart';
 import '../../../../components/common/gap.dart';
-import '../../../../components/feedback/app_snackbar.dart';
 import '../../../../components/inputs/app_text_field.dart';
 import '../../../../components/scaffolds/app_scaffold.dart';
+import '../../../../constants/app_assets.dart';
 import '../../../../enum/pages_routes.dart';
 import '../../../theme/tokens/color_tokens.dart';
 import '../../../theme/tokens/spacing_tokens.dart';
@@ -52,6 +52,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
+      backgroundImage: AppAssets.loginBackground,
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -88,7 +89,7 @@ class _LoginViewState extends State<LoginView> {
               Align(
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
-                  onTap: () => AppSnackbar.info('Em breve'),
+                  onTap: () => Get.toNamed<void>(PagesRoutes.esqueciSenha.path),
                   child: Text(
                     'Esqueceu sua senha?',
                     style: TypographyTokens.label.copyWith(

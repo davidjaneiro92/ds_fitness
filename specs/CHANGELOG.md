@@ -2,6 +2,14 @@
 
 Registro de alterações relevantes do projeto. Toda alteração de negócio ou arquitetura deve ser registrada aqui, com a data (mais recente primeiro).
 
+## 2026-10-12 — Cadastro: botão habilitado após preencher os campos
+
+O botão *Criar conta* não fica mais desativado por causa de um campo preenchido com valor inválido (por exemplo, uma senha menor que oito caracteres). Ele habilita quando todos os campos obrigatórios têm conteúdo; ao tocar, o formulário valida nome, e-mail, senha, data e idade e apresenta a mensagem no campo que precisa de correção. As regras de cadastro e do backend continuam iguais.
+
+## 2026-10-12 — Cadastro público e recuperação de senha
+
+O auto-cadastro existente foi habilitado conforme autorização do usuário. *Esqueceu sua senha?* agora solicita um código, permite cadastrar e confirmar uma nova senha e retorna ao login depois da redefinição; as chamadas usam as duas rotas novas da API. O backend armazena o hash HMAC do código com expiração, limite de tentativas e uso único; o sucesso revoga as sessões refresh. O envio Gmail está implementado, mas requer senha de app e chave HMAC definidas via User Secrets/variáveis de ambiente no backend antes de funcionar.
+
 ## 2026-10-12 (2) — Correção: *"not found"* ao salvar o treino e a lista que mostrava o treino de antes de salvar
 
 Achados na verificação visual do fluxo novo, depois de a tela já parecer correta. Nenhum dos dois aparecia em teste de controller.

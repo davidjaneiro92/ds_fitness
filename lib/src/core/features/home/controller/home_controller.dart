@@ -8,8 +8,7 @@ import '../abstracts/home_controller_interface.dart';
 
 /// Controller da Home. Nao busca nada na API: o nome da saudacao e o do usuario
 /// logado, que o `AuthController` ja tem.
-class HomeController extends GetxController
-    implements HomeControllerInterface {
+class HomeController extends GetxController implements HomeControllerInterface {
   final AuthControllerInterface _auth = Get.find();
 
   @override
@@ -23,10 +22,9 @@ class HomeController extends GetxController
     );
   }
 
-  /// A lista de treinos e uma aba: chegar a ela zera a pilha, como a barra
-  /// inferior faz.
+  /// Abre o fluxo de iniciar um treino, separado da lista administrativa.
   @override
   void treinar() {
-    Get.offAllNamed<void>(PagesRoutes.treinos.path);
+    Get.toNamed<void>(PagesRoutes.treinar.path);
   }
 }

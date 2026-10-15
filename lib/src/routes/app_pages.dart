@@ -30,6 +30,8 @@ import '../core/features/treino_form/view/grupos_view.dart';
 import '../core/features/treino_form/view/treino_form_view.dart';
 import '../core/features/treino_form/view/treino_revisar_view.dart';
 import '../core/features/treinos/binding/treinos_binding.dart';
+import '../core/features/treinos/view/treinar_view.dart';
+import '../core/features/treinos/view/treino_execucao_lista_view.dart';
 import '../core/features/treinos/view/treinos_view.dart';
 import '../enum/pages_routes.dart';
 
@@ -68,6 +70,19 @@ abstract class AppPages {
       page: () => const HomeView(),
       binding: HomeBinding(),
       transition: Transition.fadeIn,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.treinar.path,
+      page: () => const TreinarView(),
+      binding: TreinosBinding(),
+      transition: Transition.fadeIn,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.treinoExecucaoLista.path,
+      page: () => const TreinoExecucaoListaView(),
+      transition: _transition,
       transitionDuration: _duration,
     ),
     GetPage<void>(

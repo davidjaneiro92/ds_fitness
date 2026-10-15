@@ -7,6 +7,8 @@ enum PagesRoutes {
   esqueciSenha('/esqueci-senha'),
   cadastro('/cadastro'),
   home('/home'),
+  treinar('/treinar'),
+  treinoExecucaoLista('/treinar/exercicios'),
   treinos('/treinos'),
   treinoNovo('/treinos/novo'),
   treinoRevisar('/treinos/revisar'),

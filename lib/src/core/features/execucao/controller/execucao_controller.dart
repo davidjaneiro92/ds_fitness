@@ -98,7 +98,12 @@ class ExecucaoController extends GetxController
     super.onInit();
     final dynamic args = Get.arguments;
     if (args is ExecucaoArgs) {
-      unawaited(carregarTreino(args.treinoId));
+      unawaited(
+        carregarTreino(
+          args.treinoId,
+          indiceInicial: args.indiceExercicio,
+        ),
+      );
     } else {
       _log.warning('ExecucaoView aberta sem ExecucaoArgs valido');
     }
@@ -111,7 +116,10 @@ class ExecucaoController extends GetxController
   }
 
   /// Carrega o treino pelo id e inicia a execucao no primeiro exercicio.
-  Future<void> carregarTreino(String treinoId) async {
+  Future<void> carregarTreino(
+    String treinoId, {
+    int indiceInicial = 0,
+  }) async {
     estado.value = ExecucaoState.carregando;
     try {
       final Treino? carregado = await _repository.obterTreino(treinoId);
@@ -127,13 +135,16 @@ class ExecucaoController extends GetxController
         ),
       );
       await _usarUltimasCargas(carregado);
-      indiceExercicio.value = 0;
+      indiceExercicio.value = carregado.exercicios.isEmpty
+          ? 0
+          : indiceInicial.clamp(0, carregado.exercicios.length - 1).toInt();
       serieAtual.value = 1;
       _retomarSnapshot(carregado);
       estado.value = ExecucaoState.exercicio;
       _iniciarTimerTreino();
     } catch (erro, stackTrace) {
-      _log.error('Falha ao carregar treino para execucao', error: erro, stackTrace: stackTrace);
+      _log.error('Falha ao carregar treino para execucao',
+          error: erro, stackTrace: stackTrace);
       AppSnackbar.erro(ErrorMessages.de(erro));
     }
   }
@@ -307,7 +318,8 @@ class ExecucaoController extends GetxController
     if (t == null) {
       return;
     }
-    final bool ultimoExercicio = indiceExercicio.value >= t.exercicios.length - 1;
+    final bool ultimoExercicio =
+        indiceExercicio.value >= t.exercicios.length - 1;
     if (ultimoExercicio) {
       unawaited(_finalizarTreino());
     } else {
@@ -437,7 +449,8 @@ class ExecucaoController extends GetxController
 
   void _iniciarTimerSerieConcluida() {
     _timerSerieConcluida?.cancel();
-    _timerSerieConcluida = Timer(const Duration(seconds: 3), avancarAposSerieConcluida);
+    _timerSerieConcluida =
+        Timer(const Duration(seconds: 3), avancarAposSerieConcluida);
   }
 
   void _cancelarTimers() {

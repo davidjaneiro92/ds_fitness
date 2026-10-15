@@ -16,7 +16,6 @@ import '../../../../components/scaffolds/app_scaffold.dart';
 import '../../../../core/theme/tokens/spacing_tokens.dart';
 import '../../../../enum/pages_routes.dart';
 import '../../../../models/treino_exercicio.dart';
-import '../../../../routes/route_args.dart';
 import '../abstracts/treino_form_controller_interface.dart';
 import 'widgets/treino_dados_form.dart';
 
@@ -24,9 +23,8 @@ import 'widgets/treino_dados_form.dart';
 /// ("Treino A • Segunda"), os exercicios ja configurados e o convite para
 /// acrescentar mais.
 ///
-/// E tambem a tela de um treino que ja existe (aberto pela lista de treinos):
-/// ali o botao principal e *Iniciar treino*, e *Salvar treino* so se habilita
-/// quando algo mudou.
+/// Treinos existentes podem ser editados por aqui. A execução tem um fluxo
+/// separado, acessado pelo menu *Treinar*.
 class TreinoRevisarView extends StatefulWidget {
   const TreinoRevisarView({super.key});
 
@@ -82,22 +80,6 @@ class _TreinoRevisarViewState extends State<TreinoRevisarView> {
     AppSnackbar.success('Treino salvo!');
   }
 
-  Future<void> _iniciar() async {
-    if (!await _controller.salvar()) {
-      return;
-    }
-    final String? id = _controller.treinoId;
-    _controller.encerrar();
-    if (id != null) {
-      unawaited(
-        Get.offNamed<void>(
-          PagesRoutes.execucao.path,
-          arguments: ExecucaoArgs(treinoId: id),
-        ),
-      );
-    }
-  }
-
   void _adicionar() => Get.toNamed<void>(PagesRoutes.grupos.path);
 
   void _editar(TreinoExercicio item) {
@@ -129,9 +111,8 @@ class _TreinoRevisarViewState extends State<TreinoRevisarView> {
           Obx(
             () => AppButton(
               label: 'Concluir',
-              onPressed: _controller.podeContinuar
-                  ? () => Get.back<void>()
-                  : null,
+              onPressed:
+                  _controller.podeContinuar ? () => Get.back<void>() : null,
             ),
           ),
         ],
@@ -209,24 +190,12 @@ class _TreinoRevisarViewState extends State<TreinoRevisarView> {
                   _controller.podeSalvar ? () => unawaited(_salvar()) : null,
             );
           }
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              AppButton(
-                label: 'Iniciar treino',
-                loading: salvando,
-                onPressed:
-                    _controller.podeSalvar ? () => unawaited(_iniciar()) : null,
-              ),
-              const Gap(SpacingTokens.sm),
-              AppButton(
-                label: 'Salvar treino',
-                variant: AppButtonVariant.outline,
-                onPressed: _controller.podeSalvar && _controller.alterado
-                    ? () => unawaited(_salvar())
-                    : null,
-              ),
-            ],
+          return AppButton(
+            label: 'Salvar alterações',
+            loading: salvando,
+            onPressed: _controller.podeSalvar && _controller.alterado
+                ? () => unawaited(_salvar())
+                : null,
           );
         }),
       ),

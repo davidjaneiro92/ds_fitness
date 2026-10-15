@@ -1,5 +1,6 @@
 import '../models/exercicio.dart';
 import '../models/sessao.dart';
+import '../models/treino.dart';
 
 /// Argumentos tipados de navegacao.
 ///
@@ -24,9 +25,19 @@ class TreinoFormArgs {
 
 /// `/execucao` — treino a ser executado.
 class ExecucaoArgs {
-  const ExecucaoArgs({required this.treinoId});
+  const ExecucaoArgs({required this.treinoId, this.indiceExercicio = 0});
 
   final String treinoId;
+
+  /// Exercício selecionado na lista do treino (0-based).
+  final int indiceExercicio;
+}
+
+/// `/treinar/exercicios` — treino selecionado para iniciar.
+class TreinoExecucaoListaArgs {
+  const TreinoExecucaoListaArgs({required this.treino});
+
+  final Treino treino;
 }
 
 /// `/execucao/concluido` — resumo da sessao finalizada.

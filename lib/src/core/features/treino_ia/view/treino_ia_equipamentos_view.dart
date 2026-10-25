@@ -29,7 +29,7 @@ class TreinoIaEquipamentosView extends GetView<TreinoIaControllerInterface> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      navbar: const TreinoIaProgressHeader(etapaAtual: 2),
+      navbar: const TreinoIaProgressHeader(etapaAtual: 3, totalEtapas: 5),
       body: TreinoIaContentFrame(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

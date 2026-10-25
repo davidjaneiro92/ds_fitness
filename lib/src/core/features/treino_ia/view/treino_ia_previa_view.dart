@@ -15,6 +15,7 @@ import '../../../../core/theme/tokens/spacing_tokens.dart';
 import '../../../../core/theme/tokens/typography_tokens.dart';
 import '../../../../enum/pages_routes.dart';
 import '../../../../models/exercicio.dart';
+import '../../../../models/plano_ia.dart';
 import '../../../../models/treino.dart';
 import '../../../../models/treino_exercicio.dart';
 import '../../../../routes/route_args.dart';
@@ -45,6 +46,12 @@ class TreinoIaPreviaView extends GetView<TreinoIaControllerInterface> {
               descricao:
                   'Você pode remover exercícios ou incluir outros em cada treino.',
             ),
+            if (controller.avaliacao.value
+                case final AvaliacaoCorporal avaliacao)
+              Padding(
+                padding: const EdgeInsets.only(bottom: SpacingTokens.md),
+                child: _AvaliacaoCard(avaliacao: avaliacao),
+              ),
             ...treinos.asMap().entries.map(
                   (MapEntry<int, Treino> entrada) => Padding(
                     padding: const EdgeInsets.only(bottom: SpacingTokens.md),
@@ -234,4 +241,64 @@ class _ExerciseFallback extends StatelessWidget {
         color: ColorTokens.bgSurface,
         child: Icon(Icons.fitness_center_rounded, color: ColorTokens.accent),
       );
+}
+
+/// Como o IMC do usuário mudou o plano, em linguagem simples.
+class _AvaliacaoCard extends StatelessWidget {
+  const _AvaliacaoCard({required this.avaliacao});
+
+  final AvaliacaoCorporal avaliacao;
+
+  @override
+  Widget build(BuildContext context) {
+    final double? imc = avaliacao.imc;
+    return AppCard(
+      background: ColorTokens.bgAccentSurface,
+      padding: const EdgeInsets.all(SpacingTokens.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              const Icon(
+                Icons.monitor_heart_outlined,
+                color: ColorTokens.accent,
+                size: 20,
+              ),
+              const SizedBox(width: SpacingTokens.sm),
+              Expanded(
+                child: Text(
+                  imc == null
+                      ? avaliacao.classificacao
+                      : 'IMC ${imc.toStringAsFixed(1).replaceAll('.', ',')} · '
+                          '${avaliacao.classificacao}',
+                  style: TypographyTokens.cardTitle,
+                ),
+              ),
+            ],
+          ),
+          for (final String ajuste in avaliacao.ajustes) ...<Widget>[
+            const SizedBox(height: SpacingTokens.xs),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(top: 2),
+                  child: Icon(
+                    Icons.check_rounded,
+                    color: ColorTokens.accent,
+                    size: 16,
+                  ),
+                ),
+                const SizedBox(width: SpacingTokens.xs),
+                Expanded(
+                  child: Text(ajuste, style: TypographyTokens.bodyMuted),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }

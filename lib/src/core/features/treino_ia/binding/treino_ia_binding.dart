@@ -26,11 +26,15 @@ class TreinoIaBinding extends Bindings {
       Get.put<TreinoIaRepositoryInterface>(TreinoIaRepository(),
           permanent: true);
     }
-    if (!Get.isRegistered<TreinoIaControllerInterface>()) {
-      Get.put<TreinoIaControllerInterface>(
-        TreinoIaController(),
-        permanent: true,
-      );
+    // A rota de entrada sempre começa um fluxo novo. Se o anterior foi
+    // interrompido sem cancelar (ex.: a sessão expirou e o app foi ao login),
+    // o controller antigo ficaria com o perfil vazio e as escolhas velhas.
+    if (Get.isRegistered<TreinoIaControllerInterface>()) {
+      Get.delete<TreinoIaControllerInterface>(force: true);
     }
+    Get.put<TreinoIaControllerInterface>(
+      TreinoIaController(),
+      permanent: true,
+    );
   }
 }

@@ -172,6 +172,27 @@ sequenceDiagram
     L->>S: GET /treinos e /treinos/do-dia (recarrega)
 ```
 
+## Montar treino com IA
+
+Um `TreinoIaController` serve todas as etapas; ele nasce na entrada (`/montar-ia`, que sempre começa do zero) e é descartado ao cancelar, sair pela primeira tela ou salvar.
+
+```mermaid
+flowchart TD
+    A["Início: Montar meu treino com IA"] --> B["1 · Seus dados<br/>peso, altura, IMC na hora"]
+    B -->|Continuar: 20–400 kg, 100–250 cm| P["PUT /cadastro/perfil<br/>(falha não bloqueia)"]
+    P --> C["2 · Personalize<br/>nível, academia ou casa"]
+    C -->|em casa| D["3 · Equipamentos"]
+    C -->|academia| E["Lesões"]
+    D --> E
+    E --> F["Foco: grupos a priorizar"]
+    F -->|Ver prévia| G["POST /calculo-treino/previa"]
+    G --> H["Prévia: quadro do IMC + sessões<br/>nomeadas pelos grupos"]
+    H -->|remover / adicionar exercício| H
+    H -->|Salvar plano e começar| I["POST /calculo-treino/gerar<br/>+ PUT das sessões alteradas"]
+    I --> J["Treinar"]
+    B -->|voltar| K["descarta o fluxo"]
+```
+
 ## Meus treinos
 
 ```mermaid

@@ -2,6 +2,16 @@
 
 Registro de alterações relevantes do projeto. Toda alteração de negócio ou arquitetura deve ser registrada aqui, com a data (mais recente primeiro).
 
+## 2026-10-25 — Treino com IA: peso, altura e IMC; sessões por grupo muscular
+
+**Nova etapa *Seus dados*** no início do gerador (`/montar-ia`): peso e altura, preenchidos com o perfil, com o IMC e a faixa da OMS calculados enquanto o usuário digita. Os valores voltam para o perfil e seguem no pedido à API, que adapta o treino ao IMC (cardio, impacto, volume, descanso). As Preferências passaram para `/montar-ia/preferencias`, e as etapas foram renumeradas (5 em casa, 4 na academia).
+
+**A prévia explica a adaptação** num quadro *IMC · faixa* com a lista de ajustes, e as sessões passaram a ter o **nome dos grupos musculares** ("Peito", "Costas", "Bíceps, Tríceps e Antebraço", "… e Cardio") em vez de "Empurrar A / Puxar B". A divisão por grupo e as regras do IMC são do backend (SDD 14, §4.3–4.6).
+
+**Correção:** o `TreinoIaController` era permanente e só saía ao cancelar ou salvar; se a sessão expirasse no meio do fluxo, a volta reaproveitava o controller com o perfil vazio. Agora a entrada sempre cria um novo.
+
+**Também:** `AndroidManifest.xml` principal com a permissão `INTERNET` (antes só os manifests de debug e profile tinham — o APK de release ficaria sem rede), e o `AppEnvironment` com a URL de produção da Azure, usada no release e, enquanto `_debugUsaProducao` for `true`, também no debug.
+
 ## 2026-10-12 — Cadastro: botão habilitado após preencher os campos
 
 O botão *Criar conta* não fica mais desativado por causa de um campo preenchido com valor inválido (por exemplo, uma senha menor que oito caracteres). Ele habilita quando todos os campos obrigatórios têm conteúdo; ao tocar, o formulário valida nome, e-mail, senha, data e idade e apresenta a mensagem no campo que precisa de correção. As regras de cadastro e do backend continuam iguais.

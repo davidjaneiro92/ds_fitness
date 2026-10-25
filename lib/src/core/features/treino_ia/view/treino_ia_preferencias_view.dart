@@ -13,111 +13,110 @@ import '../../../../models/usuario.dart';
 import '../abstracts/treino_ia_controller_interface.dart';
 import 'widgets/treino_ia_widgets.dart';
 
-/// Etapa 1/4: objetivo do perfil, nível e local do treino.
+/// Etapa 2: objetivo do perfil, nível e local do treino.
 class TreinoIaPreferenciasView extends GetView<TreinoIaControllerInterface> {
   const TreinoIaPreferenciasView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final TreinoIaControllerInterface estado = controller;
-    return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (bool didPop, Object? result) {
-        if (didPop) estado.descartarAoSair();
-      },
-      child: AppScaffold(
-        navbar: TreinoIaProgressHeader(
-          etapaAtual: 1,
-          onBack: estado.cancelar,
-        ),
-        body: TreinoIaContentFrame(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: SpacingTokens.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const TreinoIaStepTitle(titulo: 'Personalize seu treino'),
-                Obx(() => _ObjetivoCard(usuario: estado.usuario.value)),
-                const Gap(SpacingTokens.md),
-                const _Secao(titulo: 'Nível de experiência'),
-                Obx(
-                  () => Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: _NivelCard(
-                          icon: Icons.directions_run_rounded,
-                          titulo: 'Iniciante',
-                          selecionado: estado.nivel.value == 'iniciante',
-                          onTap: () => estado.selecionarNivel('iniciante'),
-                        ),
-                      ),
-                      const SizedBox(width: SpacingTokens.sm),
-                      Expanded(
-                        child: _NivelCard(
-                          icon: Icons.bar_chart_rounded,
-                          titulo: 'Intermediário',
-                          selecionado: estado.nivel.value == 'intermediario',
-                          onTap: () => estado.selecionarNivel('intermediario'),
-                        ),
-                      ),
-                      const SizedBox(width: SpacingTokens.sm),
-                      Expanded(
-                        child: _NivelCard(
-                          icon: Icons.fitness_center_rounded,
-                          titulo: 'Avançado',
-                          selecionado: estado.nivel.value == 'avancado',
-                          onTap: () => estado.selecionarNivel('avancado'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(SpacingTokens.md),
-                const _Secao(titulo: 'Onde vai treinar?'),
-                Obx(
-                  () => Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: _LocalCard(
-                          titulo: 'Academia',
-                          asset: AppAssets.iaAcademia,
-                          selecionado: estado.local.value == 'academia',
-                          onTap: () => estado.selecionarLocal('academia'),
-                        ),
-                      ),
-                      const SizedBox(width: SpacingTokens.sm),
-                      Expanded(
-                        child: _LocalCard(
-                          titulo: 'Em casa',
-                          asset: AppAssets.iaCasa,
-                          selecionado: estado.local.value == 'casa',
-                          onTap: () => estado.selecionarLocal('casa'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Gap(SpacingTokens.sm),
-                const _InfoNote(
-                  texto: 'Na academia, consideramos os equipamentos padrão. '
-                      'Em casa, você escolhe o que tem disponível.',
-                ),
-              ],
-            ),
+    return AppScaffold(
+      navbar: PreferredSize(
+        preferredSize: const Size.fromHeight(SpacingTokens.navBarHeight),
+        child: Obx(
+          () => TreinoIaProgressHeader(
+            etapaAtual: 2,
+            totalEtapas: estado.totalEtapas,
           ),
         ),
-        footer: Obx(() {
-          final bool treinaEmCasa = estado.local.value == 'casa';
-          return TreinoIaStepFooter(
-            label: 'Continuar',
-            onPressed: () => Get.toNamed<void>(
-              treinaEmCasa
-                  ? PagesRoutes.treinoIaEquipamentos.path
-                  : PagesRoutes.treinoIaLesoes.path,
-            ),
-          );
-        }),
       ),
+      body: TreinoIaContentFrame(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: SpacingTokens.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const TreinoIaStepTitle(titulo: 'Personalize seu treino'),
+              Obx(() => _ObjetivoCard(usuario: estado.usuario.value)),
+              const Gap(SpacingTokens.md),
+              const _Secao(titulo: 'Nível de experiência'),
+              Obx(
+                () => Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: _NivelCard(
+                        icon: Icons.directions_run_rounded,
+                        titulo: 'Iniciante',
+                        selecionado: estado.nivel.value == 'iniciante',
+                        onTap: () => estado.selecionarNivel('iniciante'),
+                      ),
+                    ),
+                    const SizedBox(width: SpacingTokens.sm),
+                    Expanded(
+                      child: _NivelCard(
+                        icon: Icons.bar_chart_rounded,
+                        titulo: 'Intermediário',
+                        selecionado: estado.nivel.value == 'intermediario',
+                        onTap: () => estado.selecionarNivel('intermediario'),
+                      ),
+                    ),
+                    const SizedBox(width: SpacingTokens.sm),
+                    Expanded(
+                      child: _NivelCard(
+                        icon: Icons.fitness_center_rounded,
+                        titulo: 'Avançado',
+                        selecionado: estado.nivel.value == 'avancado',
+                        onTap: () => estado.selecionarNivel('avancado'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Gap(SpacingTokens.md),
+              const _Secao(titulo: 'Onde vai treinar?'),
+              Obx(
+                () => Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: _LocalCard(
+                        titulo: 'Academia',
+                        asset: AppAssets.iaAcademia,
+                        selecionado: estado.local.value == 'academia',
+                        onTap: () => estado.selecionarLocal('academia'),
+                      ),
+                    ),
+                    const SizedBox(width: SpacingTokens.sm),
+                    Expanded(
+                      child: _LocalCard(
+                        titulo: 'Em casa',
+                        asset: AppAssets.iaCasa,
+                        selecionado: estado.local.value == 'casa',
+                        onTap: () => estado.selecionarLocal('casa'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Gap(SpacingTokens.sm),
+              const _InfoNote(
+                texto: 'Na academia, consideramos os equipamentos padrão. '
+                    'Em casa, você escolhe o que tem disponível.',
+              ),
+            ],
+          ),
+        ),
+      ),
+      footer: Obx(() {
+        final bool treinaEmCasa = estado.local.value == 'casa';
+        return TreinoIaStepFooter(
+          label: 'Continuar',
+          onPressed: () => Get.toNamed<void>(
+            treinaEmCasa
+                ? PagesRoutes.treinoIaEquipamentos.path
+                : PagesRoutes.treinoIaLesoes.path,
+          ),
+        );
+      }),
     );
   }
 }

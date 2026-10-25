@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- O app chama a API na Azure; sem isto o build de release fica sem rede. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="DS Fitness"
         android:name="${applicationName}"

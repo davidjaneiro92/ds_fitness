@@ -8,6 +8,7 @@ enum PagesRoutes {
   cadastro('/cadastro'),
   home('/home'),
   treinoIa('/montar-ia'),
+  treinoIaPreferencias('/montar-ia/preferencias'),
   treinoIaEquipamentos('/montar-ia/equipamentos'),
   treinoIaLesoes('/montar-ia/lesoes'),
   treinoIaFoco('/montar-ia/foco'),

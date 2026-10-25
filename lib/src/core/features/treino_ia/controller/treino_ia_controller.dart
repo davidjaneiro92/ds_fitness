@@ -7,6 +7,7 @@ import '../../../../core/abstracts/log_service_interface.dart';
 import '../../../../enum/grupo_muscular.dart';
 import '../../../../enum/pages_routes.dart';
 import '../../../../models/exercicio.dart';
+import '../../../../models/plano_ia.dart';
 import '../../../../models/treino.dart';
 import '../../../../models/treino_exercicio.dart';
 import '../../../../models/usuario.dart';
@@ -50,6 +51,19 @@ class TreinoIaController extends GetxController
   final RxBool carregandoCatalogo = false.obs;
   @override
   final RxBool salvando = false.obs;
+  @override
+  final RxDouble peso = 0.0.obs;
+  @override
+  final RxDouble altura = 0.0.obs;
+  @override
+  final RxBool salvandoDados = false.obs;
+  @override
+  final Rxn<AvaliacaoCorporal> avaliacao = Rxn<AvaliacaoCorporal>();
+
+  static const double _pesoMinimo = 20;
+  static const double _pesoMaximo = 400;
+  static const double _alturaMinima = 1;
+  static const double _alturaMaxima = 2.5;
 
   bool _catalogoCarregado = false;
 
@@ -77,12 +91,85 @@ class TreinoIaController extends GetxController
   Future<void> _carregarPerfil() async {
     try {
       usuario.value = await _perfilRepository.obterUsuario();
+      _preencherDadosDoPerfil(usuario.value);
     } catch (erro, stackTrace) {
       _log.warning('Não foi possível carregar o perfil para o gerador',
           error: erro);
       _log.debug('Detalhe da falha ao consultar o perfil', data: stackTrace);
     } finally {
       carregandoPerfil.value = false;
+    }
+  }
+
+  /// Só preenche o que o usuário ainda não digitou nesta tela.
+  void _preencherDadosDoPerfil(Usuario? perfil) {
+    if (perfil == null) {
+      return;
+    }
+    if (peso.value <= 0 && perfil.peso > 0) {
+      peso.value = perfil.peso;
+    }
+    if (altura.value <= 0 && perfil.altura > 0) {
+      altura.value = perfil.altura > 3 ? perfil.altura / 100 : perfil.altura;
+    }
+  }
+
+  @override
+  double? get imc => AvaliacaoCorporal.calcularImc(peso.value, altura.value);
+
+  @override
+  String? get classificacaoImc {
+    final double? valor = imc;
+    return valor == null ? null : AvaliacaoCorporal.classificar(valor);
+  }
+
+  @override
+  int get totalEtapas => local.value == 'casa' ? 5 : 4;
+
+  @override
+  void definirPeso(double kg) => peso.value = kg;
+
+  @override
+  void definirAltura(double metros) => altura.value = metros;
+
+  @override
+  Future<void> confirmarDados() async {
+    if (salvandoDados.value) {
+      return;
+    }
+    if (peso.value < _pesoMinimo || peso.value > _pesoMaximo) {
+      AppSnackbar.erro('Informe um peso entre 20 e 400 kg.');
+      return;
+    }
+    if (altura.value < _alturaMinima || altura.value > _alturaMaxima) {
+      AppSnackbar.erro('Informe uma altura entre 100 e 250 cm.');
+      return;
+    }
+    salvandoDados.value = true;
+    try {
+      await _guardarNoPerfil();
+    } finally {
+      salvandoDados.value = false;
+    }
+    await Get.toNamed<void>(PagesRoutes.treinoIaPreferencias.path);
+  }
+
+  /// O perfil passa a ter o peso e a altura atuais. Falhar aqui não impede o
+  /// gerador: os valores seguem no pedido da prévia de qualquer forma.
+  Future<void> _guardarNoPerfil() async {
+    final Usuario? perfil = usuario.value;
+    if (perfil == null ||
+        (perfil.peso == peso.value && perfil.altura == altura.value)) {
+      return;
+    }
+    try {
+      usuario.value = await _perfilRepository.salvarUsuario(
+        perfil.copyWith(peso: peso.value, altura: altura.value),
+      );
+    } catch (erro, stackTrace) {
+      _log.warning('Não foi possível guardar peso e altura no perfil',
+          error: erro);
+      _log.debug('Detalhe da falha ao salvar o perfil', data: stackTrace);
     }
   }
 
@@ -146,6 +233,8 @@ class TreinoIaController extends GetxController
       'equipamento': equipamentos,
       'lesoes': lesoes.toList(),
       'foco': foco.map<String>((GrupoMuscular grupo) => grupo.slug).toList(),
+      if (peso.value > 0) 'peso': peso.value,
+      if (altura.value > 0) 'altura': altura.value,
     };
   }
 
@@ -172,12 +261,13 @@ class TreinoIaController extends GetxController
     }
     carregandoPlano.value = true;
     try {
-      final List<Treino> plano = await _gerador.previa(preferenciasApi);
-      if (plano.isEmpty) {
+      final PlanoIa plano = await _gerador.previa(preferenciasApi);
+      if (plano.treinos.isEmpty) {
         AppSnackbar.erro('Não foi possível montar um plano com essas opções.');
         return;
       }
-      treinos.assignAll(plano);
+      treinos.assignAll(plano.treinos);
+      avaliacao.value = plano.avaliacao;
       sessoesAlteradas.clear();
       await Get.toNamed<void>(PagesRoutes.treinoIaPrevia.path);
     } catch (erro, stackTrace) {
@@ -294,7 +384,8 @@ class TreinoIaController extends GetxController
     salvando.value = true;
     bool planoCriado = false;
     try {
-      final List<Treino> gerados = await _gerador.gerar(preferenciasApi);
+      final List<Treino> gerados =
+          (await _gerador.gerar(preferenciasApi)).treinos;
       if (gerados.isEmpty) {
         throw StateError('O servidor não retornou os treinos gerados.');
       }

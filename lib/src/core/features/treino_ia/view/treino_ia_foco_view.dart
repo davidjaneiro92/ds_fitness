@@ -37,8 +37,8 @@ class TreinoIaFocoView extends GetView<TreinoIaControllerInterface> {
         child: Obx(() {
           final bool treinaEmCasa = controller.local.value == 'casa';
           return TreinoIaProgressHeader(
-            etapaAtual: treinaEmCasa ? 4 : 3,
-            totalEtapas: treinaEmCasa ? 4 : 3,
+            etapaAtual: treinaEmCasa ? 5 : 4,
+            totalEtapas: treinaEmCasa ? 5 : 4,
           );
         }),
       ),

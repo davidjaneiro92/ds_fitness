@@ -1,8 +1,8 @@
-import '../../../../models/treino.dart';
+import '../../../../models/plano_ia.dart';
 
 /// Contrato do gerador: calcula uma prévia ou persiste o plano calculado.
 abstract class TreinoIaRepositoryInterface {
-  Future<List<Treino>> previa(Map<String, dynamic> preferencias);
+  Future<PlanoIa> previa(Map<String, dynamic> preferencias);
 
-  Future<List<Treino>> gerar(Map<String, dynamic> preferencias);
+  Future<PlanoIa> gerar(Map<String, dynamic> preferencias);
 }

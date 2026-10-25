@@ -34,8 +34,8 @@ class TreinoIaLesoesView extends GetView<TreinoIaControllerInterface> {
         child: Obx(() {
           final bool treinaEmCasa = controller.local.value == 'casa';
           return TreinoIaProgressHeader(
-            etapaAtual: treinaEmCasa ? 3 : 2,
-            totalEtapas: treinaEmCasa ? 4 : 3,
+            etapaAtual: treinaEmCasa ? 4 : 3,
+            totalEtapas: treinaEmCasa ? 5 : 4,
           );
         }),
       ),

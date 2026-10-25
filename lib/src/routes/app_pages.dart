@@ -30,6 +30,7 @@ import '../core/features/treino_form/view/grupos_view.dart';
 import '../core/features/treino_form/view/treino_form_view.dart';
 import '../core/features/treino_form/view/treino_revisar_view.dart';
 import '../core/features/treino_ia/binding/treino_ia_binding.dart';
+import '../core/features/treino_ia/view/treino_ia_dados_view.dart';
 import '../core/features/treino_ia/view/treino_ia_equipamentos_view.dart';
 import '../core/features/treino_ia/view/treino_ia_foco_view.dart';
 import '../core/features/treino_ia/view/treino_ia_lesoes_view.dart';
@@ -81,8 +82,14 @@ abstract class AppPages {
     ),
     GetPage<void>(
       name: PagesRoutes.treinoIa.path,
-      page: () => const TreinoIaPreferenciasView(),
+      page: () => const TreinoIaDadosView(),
       binding: TreinoIaBinding(),
+      transition: _transition,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.treinoIaPreferencias.path,
+      page: () => const TreinoIaPreferenciasView(),
       transition: _transition,
       transitionDuration: _duration,
     ),

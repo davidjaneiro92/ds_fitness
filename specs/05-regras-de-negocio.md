@@ -96,6 +96,17 @@ A **carga não se define aqui**: ela é escolhida na execução. O botão é *Ad
 4. Depois de salvar, os ids locais são trocados pelos do servidor, o fluxo é encerrado e o app volta à lista (se ela abriu o fluxo) ou abre a lista (se foi a Início), com o aviso *"Treino salvo!"*.
 5. *Iniciar treino* **salva** (se mudou) e abre a execução, substituindo a revisão na pilha.
 
+## Montar treino com IA (`/montar-ia`)
+
+Aberto pelo card *Montar meu treino com IA* da Início. O app só coleta as escolhas; quem monta o plano é a API (`/calculo-treino`, motor de regras — SDD 14 do backend). Etapas: **Seus dados → Personalize → Equipamentos (só em casa) → Lesões → Foco → Prévia**; o cabeçalho mostra *n/5* em casa e *n/4* na academia.
+
+- **Entrar em `/montar-ia` sempre começa um fluxo novo.** O binding descarta o `TreinoIaController` anterior: um fluxo interrompido sem cancelar (por exemplo, a sessão expirou e o app foi ao login) deixaria o perfil vazio e as escolhas antigas.
+- **Seus dados (etapa 1):** peso (kg) e altura (cm), preenchidos com o perfil. O IMC e a faixa da OMS (abaixo do peso, normal, sobrepeso, obesidade I/II/III) aparecem enquanto o usuário digita, com uma frase sobre o que muda no treino. *Continuar* exige peso de 20 a 400 kg e altura de 100 a 250 cm e grava os dois no perfil (`PUT /cadastro/perfil`); se gravar falhar, o fluxo segue — os valores vão no pedido de qualquer forma.
+- **O IMC muda o treino no servidor:** sobrepeso põe cardio em todas as sessões e mais repetições; obesidade também tira exercícios de alto impacto, um exercício por sessão, limita as séries e aumenta o descanso; abaixo do peso tira o cardio. O app não repete essas regras — só mostra o retorno.
+- **Prévia:** um quadro com *IMC · faixa* e a lista de ajustes devolvida pela API, seguido das sessões. **Cada sessão tem o nome dos grupos musculares que treina** ("Peito", "Peito e Tríceps", "Bíceps, Tríceps e Antebraço", "… e Cardio"), com os mesmos rótulos do enum `GrupoMuscular`.
+- **Salvar plano e começar** grava pelo `/calculo-treino/gerar` com as mesmas escolhas da prévia (inclusive peso e altura) e depois aplica as alterações feitas na prévia.
+- **Os treinos gerados são do usuário logado.** O dono vem do token na API; o app nunca envia id de usuário nem de conexão.
+
 ## Exercícios
 
 ### Biblioteca (`/biblioteca`, aberta pelo Perfil)
@@ -244,6 +255,7 @@ O app só conversa com `ds_fitnes_back`, sob o prefixo `/api/v1`. O endereço ba
 | Cargas | `GET /execucao/cargas/{exercicioId}`, `POST /execucao/cargas` | Execução, detalhe |
 | Estatísticas | `GET /execucao/estatisticas?periodo=` (`semana\|mes\|trimestre\|ano\|tudo`) | Evolução |
 | Resumo por exercício | `GET /execucao/exercicios/resumo` | Histórico |
+| Cálculo de treino | `POST /calculo-treino/previa` e `/gerar` (`nivel`, `local`, `equipamento`, `lesoes`, `foco`, `peso`, `altura`) → `{ gravado, avaliacao: { imc, classificacao, ajustes }, treinos }` | `TreinoIaRepository` |
 | Log de erros | `POST /log/erros` | `ErrorReporter` |
 
 ### Convenções do JSON

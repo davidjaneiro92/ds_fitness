@@ -49,6 +49,7 @@ flutter:
   assets:
     - assets/icon/icon.png
     - assets/img/backgrounds/login-gym-background.png
+    - assets/img/gerador_ia/
     # Imagens dos grupos musculares, usadas como icone
     - assets/img/muscles/
     # GIFs dos exercicios do catalogo (um por exercicio; ver docs)

@@ -16,6 +16,15 @@ abstract class AppAssets {
   static const String loginBackground =
       '$_base/backgrounds/login-gym-background.png';
 
+  /// Ilustrações do fluxo de montagem de treino com IA.
+  static const String iaHalteres = '$_base/gerador_ia/halteres.png';
+  static const String iaElastico = '$_base/gerador_ia/elastico.png';
+  static const String iaBanco = '$_base/gerador_ia/banco.png';
+  static const String iaAcademia = '$_base/gerador_ia/academia.png';
+  static const String iaCasa = '$_base/gerador_ia/casa.png';
+  static const String iaPesoCorporal = '$_base/gerador_ia/peso_corporal.png';
+  static const String iaMapaCorporal = '$_base/gerador_ia/mapa_corporal.png';
+
   /// GIF animado do movimento (telas de configuracao, execucao e detalhe).
   static String gifDoExercicio(String chave) => '$_base/gifs/$chave.gif';
 
@@ -25,5 +34,6 @@ abstract class AppAssets {
       '$_base/imagens_estaticas/$chave.thumb.webp';
 
   /// Imagem do grupo muscular, usada como icone. `todos` nao tem imagem.
-  static String musculo(GrupoMuscular grupo) => '$_base/muscles/${grupo.slug}.png';
+  static String musculo(GrupoMuscular grupo) =>
+      '$_base/muscles/${grupo.slug}.png';
 }

@@ -40,6 +40,13 @@ class TreinoExecucaoListaArgs {
   final Treino treino;
 }
 
+/// `/montar-ia/exercicios` — treino da prévia que receberá um exercício.
+class TreinoIaAdicionarExercicioArgs {
+  const TreinoIaAdicionarExercicioArgs({required this.indiceTreino});
+
+  final int indiceTreino;
+}
+
 /// `/execucao/concluido` — resumo da sessao finalizada.
 class ExecucaoConcluidoArgs {
   const ExecucaoConcluidoArgs({required this.sessao});

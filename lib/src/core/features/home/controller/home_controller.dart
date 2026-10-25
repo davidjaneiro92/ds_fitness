@@ -22,6 +22,11 @@ class HomeController extends GetxController implements HomeControllerInterface {
     );
   }
 
+  @override
+  void montarTreinoIa() {
+    Get.toNamed<void>(PagesRoutes.treinoIa.path);
+  }
+
   /// Abre o fluxo de iniciar um treino, separado da lista administrativa.
   @override
   void treinar() {

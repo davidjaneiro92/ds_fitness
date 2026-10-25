@@ -35,6 +35,8 @@ abstract class Endpoints {
   // ── Treinos ────────────────────────────────────────────────────────────
   static const String treinos = '$_prefixo/treinos';
   static const String treinoDoDia = '$_prefixo/treinos/do-dia';
+  static const String calculoTreinoPrevia = '$_prefixo/calculo-treino/previa';
+  static const String calculoTreinoGerar = '$_prefixo/calculo-treino/gerar';
 
   static String treino(String id) => '$treinos/$id';
 

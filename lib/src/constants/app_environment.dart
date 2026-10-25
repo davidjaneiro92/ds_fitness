@@ -2,16 +2,22 @@ import 'package:flutter/foundation.dart';
 
 /// Configuracao de ambiente do app (specs/02-infrastructure/configuration.md).
 ///
-/// A URL da API vem de `--dart-define=API_BASE_URL=...` e, quando ausente,
-/// assume o servidor de desenvolvimento na maquina do dev:
+/// Ordem de escolha da URL da API:
 ///
-/// * Android emulator enxerga o host em `10.0.2.2` (e nao em `localhost`);
-/// * web, desktop e iOS simulator usam `localhost`.
+/// 1. `--dart-define=API_BASE_URL=...`, quando informado (sobrescreve tudo);
+/// 2. build de release (`flutter build ...`): a API de producao na Azure;
+/// 3. debug (`flutter run`): o servidor de desenvolvimento na maquina do dev —
+///    Android emulator enxerga o host em `10.0.2.2`; web, desktop e iOS
+///    simulator usam `localhost`.
 ///
-/// Exemplo para aparelho fisico (mesma rede Wi-Fi do PC):
+/// Exemplo para aparelho fisico em debug (mesma rede Wi-Fi do PC):
 /// `flutter run --dart-define=API_BASE_URL=http://192.168.0.10:5270`
 abstract class AppEnvironment {
   static const String _urlDefinida = String.fromEnvironment('API_BASE_URL');
+
+  /// API publicada no Azure App Service.
+  static const String _urlProducao =
+      'https://dsfitness-cng7gddvfpgfcndt.westus3-01.azurewebsites.net/';
 
   /// Porta HTTP da API no `launchSettings.json` do backend.
   static const int _portaDev = 5270;
@@ -25,6 +31,9 @@ abstract class AppEnvironment {
       return _urlDefinida.endsWith('/')
           ? _urlDefinida.substring(0, _urlDefinida.length - 1)
           : _urlDefinida;
+    }
+    if (kReleaseMode) {
+      return _urlProducao;
     }
     return 'http://$_hostDeDesenvolvimento:$_portaDev';
   }

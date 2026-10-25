@@ -29,6 +29,13 @@ import '../core/features/treino_form/view/exercicios_view.dart';
 import '../core/features/treino_form/view/grupos_view.dart';
 import '../core/features/treino_form/view/treino_form_view.dart';
 import '../core/features/treino_form/view/treino_revisar_view.dart';
+import '../core/features/treino_ia/binding/treino_ia_binding.dart';
+import '../core/features/treino_ia/view/treino_ia_equipamentos_view.dart';
+import '../core/features/treino_ia/view/treino_ia_foco_view.dart';
+import '../core/features/treino_ia/view/treino_ia_lesoes_view.dart';
+import '../core/features/treino_ia/view/treino_ia_preferencias_view.dart';
+import '../core/features/treino_ia/view/treino_ia_previa_view.dart';
+import '../core/features/treino_ia/view/treino_ia_selecionar_exercicio_view.dart';
 import '../core/features/treinos/binding/treinos_binding.dart';
 import '../core/features/treinos/view/treinar_view.dart';
 import '../core/features/treinos/view/treino_execucao_lista_view.dart';
@@ -70,6 +77,43 @@ abstract class AppPages {
       page: () => const HomeView(),
       binding: HomeBinding(),
       transition: Transition.fadeIn,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.treinoIa.path,
+      page: () => const TreinoIaPreferenciasView(),
+      binding: TreinoIaBinding(),
+      transition: _transition,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.treinoIaEquipamentos.path,
+      page: () => const TreinoIaEquipamentosView(),
+      transition: _transition,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.treinoIaLesoes.path,
+      page: () => const TreinoIaLesoesView(),
+      transition: _transition,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.treinoIaFoco.path,
+      page: () => const TreinoIaFocoView(),
+      transition: _transition,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.treinoIaPrevia.path,
+      page: () => const TreinoIaPreviaView(),
+      transition: _transition,
+      transitionDuration: _duration,
+    ),
+    GetPage<void>(
+      name: PagesRoutes.treinoIaAdicionarExercicio.path,
+      page: () => const TreinoIaSelecionarExercicioView(),
+      transition: _transition,
       transitionDuration: _duration,
     ),
     GetPage<void>(
